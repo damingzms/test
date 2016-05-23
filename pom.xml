@@ -8,11 +8,10 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>test-common</module>
-		<module>test-test</module>
 		<module>test-concurrency</module>
 		<module>test-redis</module>
-		<module>test-redis-client</module>
 		<module>test-rmi</module>
+		<module>test-rmi-client</module>
 		<module>test-scheduling</module>
 		<module>test-springboot</module>
 	</modules>
