@@ -1,0 +1,1 @@
+RandomAccessFile inf = new RandomAccessFile( inputFile, "r" );

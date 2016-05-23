@@ -1,0 +1,9 @@
+// 运行一下命令生成代码
+// idlj helloapp.idl
+
+module helloapp {
+    interface Hello
+    {
+        string sayHello();
+    };
+};
