@@ -13,8 +13,8 @@
 		<module>test-rmi</module>
 		<module>test-rmi-client</module>
 		<module>test-scheduling</module>
-		<module>test-springboot</module>
 		<module>test-jpa</module>
+		<module>test-springboot</module>
 	</modules>
 
 	<properties>
