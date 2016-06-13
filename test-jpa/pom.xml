@@ -32,7 +32,7 @@
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-proxool</artifactId>
+			<artifactId>hibernate-c3p0</artifactId>
 		</dependency>
 
 		<dependency>
@@ -40,6 +40,15 @@
 			<artifactId>hibernate-ehcache</artifactId>
 		</dependency>
 		<!-- hibernate End -->
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.oracle</groupId>
