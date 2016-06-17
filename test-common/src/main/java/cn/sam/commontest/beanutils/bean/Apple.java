@@ -1,0 +1,44 @@
+package cn.sam.commontest.beanutils.bean;
+
+import java.util.List;
+
+public class Apple {
+	private String color;
+	private Integer weight;
+	
+	private Orange orange;
+	private List<Orange> oranges;
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public Integer getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Integer weight) {
+		this.weight = weight;
+	}
+
+	public Orange getOrange() {
+		return orange;
+	}
+
+	public void setOrange(Orange orange) {
+		this.orange = orange;
+	}
+
+	public List<Orange> getOranges() {
+		return oranges;
+	}
+
+	public void setOranges(List<Orange> oranges) {
+		this.oranges = oranges;
+	}
+
+}
