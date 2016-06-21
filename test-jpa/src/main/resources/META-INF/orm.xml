@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<named-query name="Person.findByLastname">
+  <query>select p from Person p where p.lastname = ?1</query>
+</named-query>

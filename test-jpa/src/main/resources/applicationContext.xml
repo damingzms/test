@@ -71,6 +71,7 @@
 		transaction-manager-ref="transactionManager" />
 
 	<!-- 将加有Repository注解的使用JPA或者Hibernate原生API的方法所抛出的异常转化为Spring的DataAccessException中的异常 -->
+	<!-- jpa:repositories元素应该已经引入了这个bean -->
 	<bean
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
