@@ -15,6 +15,7 @@ public class Person {
 	private String firstname;
 	private String lastname;
 	private String emailAddress;
+	private String mobile;
 	
 	private Address address;
 
@@ -62,6 +63,15 @@ public class Person {
 
 	public void setEmailAddress(String emailAddress) {
 		this.emailAddress = emailAddress;
+	}
+
+	@Column(length = 15)
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	@ManyToOne

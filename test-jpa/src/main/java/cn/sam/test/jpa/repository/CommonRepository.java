@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 
 /**
@@ -18,5 +19,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 public interface CommonRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 	
 	public List<T> findByName(String name);
-	
+
+	@Query("select t from #{#entityName} t where t.attribute = ?1")
+	List<T> findAllByAttribute(String attribute);
 }

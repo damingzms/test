@@ -10,12 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.concurrent.ListenableFuture;
 
 import cn.sam.test.jpa.bean.Person;
+import cn.sam.test.jpa.repository.projection.NoAddresses;
 
 /**
  * 1、Spring jpa能够根据接口方法名、命名查询、Query注解自动实现方法细节，而PersonRepositoryCustom则用于实现自定义方法逻辑
@@ -99,4 +101,24 @@ public interface PersonRepository extends JpaRepository<Person, Integer>, Person
 	
 	@Query("select p from Person p where p.firstname = :firstname or p.lastname = :lastname")
 	Person findByLastnameOrFirstname(@Param("lastname") String lastname, @Param("firstname") String firstname);
+	
+	//spel-expressions
+//	@Query("select p from #{#entityName} p where p.lastname = ?1")
+//	List<Person> findByLastname(String lastname);
+	
+	
+	// update
+	@Modifying
+	@Query("update Person p set p.firstname = ?1 where p.lastname = ?2")
+	int setFixedFirstnameFor(String firstname, String lastname);
+	
+	
+	//QueryHints
+//	@QueryHints(value = { @QueryHint(name = "name", value = "value") }, forCounting = false)
+//	Page<Person> findByLastname(String lastname, Pageable pageable);
+	
+	
+	// projection
+	NoAddresses findByFirstName(String firstName);
+	
 }
