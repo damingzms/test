@@ -5,14 +5,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 
 @Entity
+@NamedQuery(name = "User.findByEmailAddress", query = "select p from Person p where p.emailAddress = ?1")
 public class Person {
 	private Integer id;
 	private String name;
-	private String Firstname;
-	private String Lastname;
-	private String EmailAddress;
+	private String firstname;
+	private String lastname;
+	private String emailAddress;
+	private String mobile;
 	
 	private Address address;
 
@@ -37,29 +40,38 @@ public class Person {
 
 	@Column(length = 12)
 	public String getFirstname() {
-		return Firstname;
+		return firstname;
 	}
 
 	public void setFirstname(String firstname) {
-		Firstname = firstname;
+		this.firstname = firstname;
 	}
 
 	@Column(length = 12)
 	public String getLastname() {
-		return Lastname;
+		return lastname;
 	}
 
 	public void setLastname(String lastname) {
-		Lastname = lastname;
+		this.lastname = lastname;
 	}
 
 	@Column(length = 30)
 	public String getEmailAddress() {
-		return EmailAddress;
+		return emailAddress;
 	}
 
 	public void setEmailAddress(String emailAddress) {
-		EmailAddress = emailAddress;
+		this.emailAddress = emailAddress;
+	}
+
+	@Column(length = 15)
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	@ManyToOne

@@ -59,6 +59,8 @@
 	</bean>
 
 	<!-- 配置Spring Data JPA扫描目录 -->
+    <!-- Automatically lookup the EntityManagerFactory bean with the name entityManagerFactory in the ApplicationContext -->
+    <!-- Automatically lookup the PlatformTransactionManager bean with the name transactionManager in the ApplicationContext -->
 	<jpa:repositories base-package="cn.sam.test.jpa.repository" />
 		
 </beans>
