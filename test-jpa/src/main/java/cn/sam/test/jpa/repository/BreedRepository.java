@@ -3,7 +3,7 @@ package cn.sam.test.jpa.repository;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 
-import cn.sam.test.jpa.bean.Breed;
+import cn.sam.test.jpa.model.Breed;
 
 /**
  * 详细用法请见{@link PersonRepository}

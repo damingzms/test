@@ -1,4 +1,4 @@
-package cn.sam.test.jpa.bean;
+package cn.sam.test.jpa.model;
 
 import java.util.ArrayList;
 import java.util.List;

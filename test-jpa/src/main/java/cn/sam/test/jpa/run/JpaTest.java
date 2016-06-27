@@ -10,11 +10,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specifications;
 
-import cn.sam.test.jpa.bean.Animal;
-import cn.sam.test.jpa.bean.Person;
+import cn.sam.test.jpa.model.Animal;
+import cn.sam.test.jpa.model.Person;
 import cn.sam.test.jpa.repository.AnimalRepository;
 import cn.sam.test.jpa.repository.PersonRepository;
+import cn.sam.test.jpa.repository.specification.PersonSpecs;
 
 public class JpaTest {
 	
@@ -119,6 +121,11 @@ public class JpaTest {
 	
 	public void testPaging() {
 		Page<Person> page = personRepository.findAll(new PageRequest(1, 20));
+	}
+	
+	public void testSpecification() {
+		List<Person> list = personRepository.findAll(PersonSpecs.isNameStartWith("sam"));
+		List<Person> list2 = personRepository.findAll(Specifications.where(PersonSpecs.isNameStartWith("sam")).and(PersonSpecs.isMobileEq("13755555555")));
 	}
 	
 	// 以下方法只使用原始jpa api

@@ -1,4 +1,4 @@
-package cn.sam.test.jpa.bean;
+package cn.sam.test.jpa.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

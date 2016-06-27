@@ -18,7 +18,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.concurrent.ListenableFuture;
 
-import cn.sam.test.jpa.bean.Person;
+import cn.sam.test.jpa.model.Person;
 import cn.sam.test.jpa.repository.projection.NoAddresses;
 
 /**
@@ -29,7 +29,8 @@ import cn.sam.test.jpa.repository.projection.NoAddresses;
  * <p>
  * 3、JpaRepository、PagingAndSortingRepository、CrudRepository等接口里面的方法应该是在SimpleJpaRepository类中实现的
  * <p>
- * 4、extending your repository interface with the JpaSpecificationExecutor interface to support specifications
+ * 4、extending your repository interface with the JpaSpecificationExecutor interface to support specifications, <br />
+ * see also {@link cn.sam.test.jpa.repository.specification.PersonSpecs} and {@link cn.sam.test.jpa.run.JpaTest#testSpecification()}
  * 
  * @author SAM
  *

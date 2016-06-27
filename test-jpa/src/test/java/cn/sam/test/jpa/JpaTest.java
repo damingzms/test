@@ -8,7 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cn.sam.test.jpa.bean.Person;
+import cn.sam.test.jpa.model.Person;
 
 public class JpaTest {
 
