@@ -6,9 +6,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.NamedStoredProcedureQuery;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureParameter;
 
 @Entity
 @NamedQuery(name = "User.findByEmailAddress", query = "select p from Person p where p.emailAddress = ?1")
+@NamedStoredProcedureQuery(name = "Person.plus1io", procedureName = "plus1inout", parameters = {
+		  @StoredProcedureParameter(mode = ParameterMode.IN, name = "arg", type = Integer.class),
+		  @StoredProcedureParameter(mode = ParameterMode.OUT, name = "res", type = Integer.class) })
 public class Person {
 	private Integer id;
 	private String name;

@@ -10,8 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -26,11 +28,13 @@ import cn.sam.test.jpa.repository.projection.NoAddresses;
  * 实现类名也可以完全使用自定义的名称，具体请见官方文档：http://docs.spring.io/spring-data/data-jpa/docs/1.10.1.RELEASE/reference/html/
  * <p>
  * 3、JpaRepository、PagingAndSortingRepository、CrudRepository等接口里面的方法应该是在SimpleJpaRepository类中实现的
+ * <p>
+ * 4、extending your repository interface with the JpaSpecificationExecutor interface to support specifications
  * 
  * @author SAM
  *
  */
-public interface PersonRepository extends JpaRepository<Person, Integer>, PersonRepositoryCustom {
+public interface PersonRepository extends JpaRepository<Person, Integer>, PersonRepositoryCustom, JpaSpecificationExecutor<Person> {
 	List<Person> findByEmailAddressAndLastname(String emailAddress, String lastname);
 
 	// distinct
@@ -120,5 +124,24 @@ public interface PersonRepository extends JpaRepository<Person, Integer>, Person
 	
 	// projection
 	NoAddresses findByFirstName(String firstName);
+	
+	
+	// procedure 存储过程
+	// see "@NamedStoredProcedureQuery" annotation in cn.sam.test.jpa.bean.Person
+	/*
+	DROP procedure IF EXISTS plus1inout
+	CREATE procedure plus1inout (IN arg int, OUT res int)
+	BEGIN ATOMIC
+	 set res = arg + 1;
+	END
+	*/
+	@Procedure("plus1inout")
+	Integer plus1inout(Integer arg);
+//	@Procedure(procedureName = "plus1inout")
+//	Integer plus1inout(Integer arg);
+//	@Procedure(name = "Person.plus1io")
+//	Integer plus1inout(@Param("arg") Integer arg);
+//	@Procedure
+//	Integer plus1io(@Param("arg") Integer arg);
 	
 }

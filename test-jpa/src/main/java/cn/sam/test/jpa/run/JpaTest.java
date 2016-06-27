@@ -1,4 +1,4 @@
-package cn.sam.test.jpa.rum;
+package cn.sam.test.jpa.run;
 
 import java.util.List;
 
