@@ -8,6 +8,9 @@ import javax.persistence.Persistence;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specifications;
@@ -127,6 +130,33 @@ public class JpaTest {
 		List<Person> list = personRepository.findAll(PersonSpecs.isNameStartWith("sam"));
 		List<Person> list2 = personRepository.findAll(Specifications.where(PersonSpecs.isNameStartWith("sam")).and(PersonSpecs.isMobileEq("13755555555")));
 	}
+	
+	public void testExample() {
+		// example and matcher
+		Person person = new Person();
+		person.setFirstname("Dave");
+		Example<Person> example = Example.of(person);
+
+		Person person1 = new Person();
+		person1.setFirstname("Dave");
+		ExampleMatcher matcher1 = ExampleMatcher.matching().withIgnorePaths("lastname").withIncludeNullValues();
+		Example<Person> example1 = Example.of(person1, matcher1);
+
+		ExampleMatcher matcher2 = ExampleMatcher.matching()
+				.withMatcher("address.zipCode", GenericPropertyMatchers.startsWith())
+				.withMatcher("firstname", GenericPropertyMatchers.endsWith())
+				.withMatcher("lastname", GenericPropertyMatchers.startsWith().ignoreCase());
+
+		ExampleMatcher matcher3 = ExampleMatcher.matching()
+				.withMatcher("firstname", match -> match.endsWith())
+				.withMatcher("firstname", match -> match.startsWith());
+		
+		List<Person> list = personRepository.findAll(example);
+	}
+	
+	
+	
+	
 	
 	// 以下方法只使用原始jpa api
 	

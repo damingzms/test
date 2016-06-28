@@ -5,12 +5,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
+import javax.persistence.LockModeType;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
@@ -31,6 +34,11 @@ import cn.sam.test.jpa.repository.projection.NoAddresses;
  * <p>
  * 4、extending your repository interface with the JpaSpecificationExecutor interface to support specifications, <br />
  * see also {@link cn.sam.test.jpa.repository.specification.PersonSpecs} and {@link cn.sam.test.jpa.run.JpaTest#testSpecification()}
+ * <p>
+ * 5、query by example，please refer to {@link cn.sam.test.jpa.run.JpaTest#testExample()}
+ * <p>
+ * 6、Transaction with readOnly flag is propagated as hint to the underlying JDBC driver for performance optimizations.
+ * Furthermore, Spring will perform some optimizations on the underlying JPA provider. 
  * 
  * @author SAM
  *
@@ -144,5 +152,9 @@ public interface PersonRepository extends JpaRepository<Person, Integer>, Person
 //	Integer plus1inout(@Param("arg") Integer arg);
 //	@Procedure
 //	Integer plus1io(@Param("arg") Integer arg);
+
+	// Lock
+//	@Lock(LockModeType.OPTIMISTIC)
+//	List<Person> findByLastname(String lastname);
 	
 }
