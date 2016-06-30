@@ -7,11 +7,11 @@
             http://www.springframework.org/schema/beans 
             http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="beanFactoryPostProcessor" class="spring.lifecycle.MyBeanFactoryPostProcessor" />
+    <bean id="beanFactoryPostProcessor" class="cn.sam.test.spring.lifecycle.MyBeanFactoryPostProcessor" />
 
-	<bean id="beanPostProcessor" class="spring.lifecycle.MyBeanPostProcessor" />
+	<bean id="beanPostProcessor" class="cn.sam.test.spring.lifecycle.MyBeanPostProcessor" />
 
-	<bean id="instantiationAwareBeanPostProcessor" class="spring.lifecycle.MyInstantiationAwareBeanPostProcessor" />
+	<bean id="instantiationAwareBeanPostProcessor" class="cn.sam.test.spring.lifecycle.MyInstantiationAwareBeanPostProcessor" />
 
 	<bean id="beanA" class="spring.lifecycle.BeanA" init-method="_init" destroy-method="_destory" p:name="beanA" />
 

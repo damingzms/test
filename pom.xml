@@ -14,6 +14,7 @@
 		<module>test-rmi-client</module>
 		<module>test-scheduling</module>
 		<module>test-jpa</module>
+		<module>test-spring</module>
 		<module>test-springboot</module>
 	</modules>
 

@@ -1,4 +1,4 @@
-package cn.sam.commontest.spring.lifecycle;
+package cn.sam.test.spring.lifecycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -10,13 +10,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-public class BeanB implements InitializingBean, DisposableBean,
+public class BeanA implements InitializingBean, DisposableBean,
 		BeanNameAware, BeanClassLoaderAware, BeanFactoryAware, ApplicationContextAware {
 	
 	private String name;
 
-	public BeanB() {
-		System.out.println("create BeanB");
+	public BeanA() {
+		System.out.println("create BeanA");
 	}
 
 	public String getName() {

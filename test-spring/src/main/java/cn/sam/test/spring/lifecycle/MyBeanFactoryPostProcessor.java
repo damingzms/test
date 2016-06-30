@@ -1,4 +1,4 @@
-package cn.sam.commontest.spring.lifecycle;
+package cn.sam.test.spring.lifecycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
