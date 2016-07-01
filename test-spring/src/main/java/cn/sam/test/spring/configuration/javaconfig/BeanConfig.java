@@ -13,7 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
-import cn.sam.test.spring.bean.Apple;
+import cn.sam.test.spring.domain.Apple;
 
 /**
  * <h2>Constraints when authoring {@code @Configuration} classes</h2>

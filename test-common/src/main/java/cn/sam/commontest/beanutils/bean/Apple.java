@@ -5,6 +5,7 @@ import java.util.List;
 public class Apple {
 	private String color;
 	private Integer weight;
+	private Double price;
 	
 	private Orange orange;
 	private List<Orange> oranges;
@@ -23,6 +24,14 @@ public class Apple {
 
 	public void setWeight(Integer weight) {
 		this.weight = weight;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 
 	public Orange getOrange() {

@@ -1,17 +1,8 @@
-package cn.sam.test.spring.bean;
+package cn.sam.test.spring.domain;
 
-public class Apple {
-	private String variety;
+public class Orange {
 	private String color;
 	private Integer weight;
-
-	public String getVariety() {
-		return variety;
-	}
-
-	public void setVariety(String variety) {
-		this.variety = variety;
-	}
 
 	public String getColor() {
 		return color;

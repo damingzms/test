@@ -5,8 +5,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import cn.sam.test.spring.bean.Apple;
-import cn.sam.test.spring.bean.Orange;
+import cn.sam.test.spring.domain.Apple;
+import cn.sam.test.spring.domain.Orange;
 
 public class Test {
 

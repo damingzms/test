@@ -1,4 +1,4 @@
-package cn.sam.test.spring.lifecycle;
+package cn.sam.test.spring.bean.lifecycle;
 
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;

@@ -16,30 +16,31 @@ public class TestBeanUtilsApache {
 		o.setColor("red");
 		o.setWeight(10);
 		
-		Apple a1 = new Apple();
-		a1.setColor("green");
-		a1.setWeight(3);
+//		Apple a1 = new Apple();
+//		a1.setColor("green");
+//		a1.setWeight(3);
+//		
+//		Apple a2 = new Apple();
+//		a2.setColor("brue");
+//		a2.setWeight(4);
+//		
+//		List<Apple> list = new ArrayList<>();
+//		list.add(a1);
+//		list.add(a2);
+//		o.setApple(a1);
+//		o.setApples(list);
 		
-		Apple a2 = new Apple();
-		a2.setColor("brue");
-		a2.setWeight(4);
-		
-		List<Apple> list = new ArrayList<>();
-		list.add(a1);
-		list.add(a2);
-		o.setApple(a1);
-		o.setApples(list);
-		
-		Orange o1 = new Orange();
-		BeanUtils.copyProperties(o1, o);
-		PropertyUtils.copyProperties(o1, o);
+//		Orange o1 = new Orange();
+//		BeanUtils.copyProperties(o1, o);
+//		PropertyUtils.copyProperties(o1, o);
 		
 		Apple a = new Apple();
+		a.setPrice(100.0);
 		BeanUtils.copyProperties(a, o);
 		PropertyUtils.copyProperties(a, o);
 		
-		org.springframework.beans.BeanUtils.copyProperties(o, o1);
-		org.springframework.beans.BeanUtils.copyProperties(o, a);
+//		org.springframework.beans.BeanUtils.copyProperties(o, o1);
+//		org.springframework.beans.BeanUtils.copyProperties(o, a);
 		
 //		PropertyUtils.copyProperties(a1, a);
 //		PropertyUtils.copyProperties(o, a);
