@@ -12,12 +12,12 @@
 	<name>test-dependency</name>
 
 	<dependencies>
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.mama100</groupId>
 			<artifactId>order</artifactId>
 			<version>5.1.5-SNAPSHOT</version>
 			<classifier>client</classifier>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 
 	<build>
@@ -30,7 +30,6 @@
 					<source>${jdk-version}</source>
 					<target>${jdk-version}</target>
 					<encoding>${project.build.sourceEncoding}</encoding>
-					<compilerArgument>-proc:none</compilerArgument>
 				</configuration>
 			</plugin>
 		</plugins>
