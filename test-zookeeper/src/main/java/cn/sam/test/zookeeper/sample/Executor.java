@@ -1,4 +1,4 @@
-package cn.sam.test.zookeeper;
+package cn.sam.test.zookeeper.sample;
 
 /**
  * A simple example program to use DataMonitor to start and
@@ -42,6 +42,11 @@ public class Executor implements Watcher, Runnable, DataMonitor.DataMonitorListe
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		args = new String[4];
+		args[0] = "localhost:2181,localhost:2182,localhost:2183";
+		args[1] = "/cn/sam/test/zookeeper";
+		args[2] = "D:\\zoo.data";
+		args[3] = "echo \"test-process\"";
 		if (args.length < 4) {
 			System.err.println("USAGE: Executor hostPort znode filename program [args ...]");
 			System.exit(2);
