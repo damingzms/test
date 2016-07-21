@@ -17,6 +17,7 @@
 		<module>test-scheduling</module>
 		<module>test-spring</module>
 		<module>test-springboot</module>
+		<module>test-zookeeper</module>
 	</modules>
 
 	<properties>
