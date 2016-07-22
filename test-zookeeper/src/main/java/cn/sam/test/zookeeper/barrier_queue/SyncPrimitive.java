@@ -15,6 +15,9 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.data.Stat;
 
+/**
+ * http://zookeeper.apache.org/doc/trunk/zookeeperTutorial.html
+ */
 public class SyncPrimitive implements Watcher {
 
 	static ZooKeeper zk = null;
@@ -134,6 +137,10 @@ public class SyncPrimitive implements Watcher {
 
 	/**
 	 * Producer-Consumer queue
+	 * 
+	 * 假设有两个消费者在等待，然后一个生产者新增一个znode，此时两个消费者都会受到通知，并且很有可能都把这个znode查询出来，
+	 * 因此其中会有一个消费者delete znode时会抛出KeeperException，
+	 * 如此一来，如果有多个消费者同事在等等，可能会有一点宽带上浪费，而且实际使用中需要做KeeperException处理。
 	 */
 	static public class Queue extends SyncPrimitive {
 
@@ -199,17 +206,21 @@ public class SyncPrimitive implements Watcher {
 						System.out.println("Going to wait");
 						mutex.wait();
 					} else {
-						Integer min = new Integer(list.get(0).substring(7));
+						String minStr = list.get(0).substring(7);
+						Integer min = new Integer(minStr);
 						for (String s : list) {
-							Integer tempValue = new Integer(s.substring(7));
+							String str = s.substring(7);
+							Integer tempValue = new Integer(str);
 							// System.out.println("Temporary value: " +
 							// tempValue);
-							if (tempValue < min)
+							if (tempValue < min) {
 								min = tempValue;
+								minStr = str;
+							}
 						}
-						System.out.println("Temporary value: " + root + "/element" + min);
-						byte[] b = zk.getData(root + "/element" + min, false, stat);
-						zk.delete(root + "/element" + min, 0);
+						System.out.println("Temporary value: " + root + "/element" + minStr);
+						byte[] b = zk.getData(root + "/element" + minStr, false, stat);
+						zk.delete(root + "/element" + minStr, 0);
 						ByteBuffer buffer = ByteBuffer.wrap(b);
 						retvalue = buffer.getInt();
 
@@ -221,6 +232,12 @@ public class SyncPrimitive implements Watcher {
 	}
 
 	public static void main(String args[]) {
+		args = new String[4];
+		args[0] = "qTest";
+		args[1] = "localhost:2181,localhost:2182,localhost:2183";
+		args[2] = "2";
+		args[3] = "c";
+		
 		if (args[0].equals("qTest"))
 			queueTest(args);
 		else
@@ -232,12 +249,12 @@ public class SyncPrimitive implements Watcher {
 		Queue q = new Queue(args[1], "/app1");
 
 		System.out.println("Input: " + args[1]);
-		int i;
+		int i = 0;
 		Integer max = new Integer(args[2]);
 
 		if (args[3].equals("p")) {
 			System.out.println("Producer");
-			for (i = 0; i < max; i++)
+//			for (i = 0; i < max; i++)
 				try {
 					q.produce(10 + i);
 				} catch (KeeperException e) {
@@ -248,7 +265,7 @@ public class SyncPrimitive implements Watcher {
 		} else {
 			System.out.println("Consumer");
 
-			for (i = 0; i < max; i++) {
+//			for (i = 0; i < max; i++)
 				try {
 					int r = q.consume();
 					System.out.println("Item: " + r);
@@ -257,7 +274,6 @@ public class SyncPrimitive implements Watcher {
 				} catch (InterruptedException e) {
 
 				}
-			}
 		}
 	}
 
