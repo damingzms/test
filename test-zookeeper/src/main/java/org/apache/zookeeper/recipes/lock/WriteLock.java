@@ -238,6 +238,10 @@ public class WriteLock extends ProtocolSupport {
                             } else {
                                 LOG.warn("Could not find the" +
                                 		" stats for less than me: " + lastChildName.getName());
+                                
+                                // 这里应该需要设置id = null吧？by sam，关于zookeeper实现分布式lock，合生元order rpc模块有一个比较好的例子
+                                // retryOperation是这里写得非常合理的地方：If a recoverable error occurs calling create() the client should call getChildren() and check for a node containing the guid used in the path name.
+                                // 但是如果znode是EPHEMERAL而且create时产生异常则连接不会被保留，则应该不会有很大问题
                             }
                         } else {
                             if (isOwner()) {
