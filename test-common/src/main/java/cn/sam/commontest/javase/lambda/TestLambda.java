@@ -1,4 +1,4 @@
-package cn.sam.commontest.javase;
+package cn.sam.commontest.javase.lambda;
 
 import java.util.Arrays;
 import java.util.List;
