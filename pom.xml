@@ -11,6 +11,7 @@
 		<module>test-concurrency</module>
 		<module>test-dependency</module>
 		<module>test-jpa</module>
+		<module>test-messaging</module>
 		<module>test-redis</module>
 		<module>test-rmi</module>
 		<module>test-rmi-client</module>
