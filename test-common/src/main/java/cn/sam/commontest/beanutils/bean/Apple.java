@@ -9,6 +9,8 @@ public class Apple {
 	
 	private Orange orange;
 	private List<Orange> oranges;
+	
+	private Integer attr;
 
 	public String getColor() {
 		return color;
@@ -48,6 +50,14 @@ public class Apple {
 
 	public void setOranges(List<Orange> oranges) {
 		this.oranges = oranges;
+	}
+
+	public Integer getAttr() {
+		return attr;
+	}
+
+	public void setAttr(Integer attr) {
+		this.attr = attr;
 	}
 
 }

@@ -15,6 +15,7 @@ public class TestBeanUtilsApache {
 		Orange o = new Orange();
 		o.setColor("red");
 		o.setWeight(10);
+		o.setAttr("qq");
 		
 //		Apple a1 = new Apple();
 //		a1.setColor("green");
@@ -37,10 +38,10 @@ public class TestBeanUtilsApache {
 		Apple a = new Apple();
 		a.setPrice(100.0);
 		BeanUtils.copyProperties(a, o);
-		PropertyUtils.copyProperties(a, o);
+//		PropertyUtils.copyProperties(a, o);
 		
 //		org.springframework.beans.BeanUtils.copyProperties(o, o1);
-//		org.springframework.beans.BeanUtils.copyProperties(o, a);
+		org.springframework.beans.BeanUtils.copyProperties(o, a);
 		
 //		PropertyUtils.copyProperties(a1, a);
 //		PropertyUtils.copyProperties(o, a);
