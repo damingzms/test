@@ -19,7 +19,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.AuditorAware;
 
 @Entity
-@NamedQuery(name = "User.findByEmailAddress", query = "select p from Person p where p.emailAddress = ?1")
+@NamedQuery(name = "Person.findByEmailAddress", query = "select p from Person p where p.emailAddress = ?1")
 @NamedStoredProcedureQuery(name = "Person.plus1io", procedureName = "plus1inout", parameters = {
 		@StoredProcedureParameter(mode = ParameterMode.IN, name = "arg", type = Integer.class),
 		@StoredProcedureParameter(mode = ParameterMode.OUT, name = "res", type = Integer.class) })
