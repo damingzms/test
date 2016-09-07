@@ -206,6 +206,11 @@
 				<artifactId>jedis</artifactId>
 				<version>2.7.3</version>
 			</dependency>
+			<dependency>
+				<groupId>org.redisson</groupId>
+				<artifactId>redisson</artifactId>
+				<version>2.3.0</version>
+			</dependency>
 
 			<!-- mq -->
 			<dependency>
