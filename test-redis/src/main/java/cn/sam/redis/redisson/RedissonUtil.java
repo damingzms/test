@@ -15,13 +15,15 @@ import org.redisson.config.Config;
  * 本示例只是简单的配置，详细配置请见以上官方文档。
  * <p>
  * Redisson instance and Redisson objects are fully-thread safe.
- * 
+ * <p>
+ * Redis server is a single-threaded application.
  * 
  * <p>
  * 1.RedissonOperationsTest.java
  * 2.RedissonDistributedObjectsTest.java
  * 3.RedissonDistributedCollectionsTest.java
  * 4.RedissonDistributedLocksAndSynchronizersTest.java
+ * 5.RedissonDistributedServicesTest.java
  * 
  */
 public final class RedissonUtil {
