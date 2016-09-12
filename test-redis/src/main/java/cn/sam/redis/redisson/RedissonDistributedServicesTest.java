@@ -1,17 +1,32 @@
 package cn.sam.redis.redisson;
 
+import java.util.Calendar;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import org.redisson.CronSchedule;
+import org.redisson.api.RAtomicLong;
+import org.redisson.api.RExecutorService;
 import org.redisson.api.RFuture;
 import org.redisson.api.RLiveObjectService;
+import org.redisson.api.RMap;
 import org.redisson.api.RRemoteService;
+import org.redisson.api.RScheduledExecutorService;
+import org.redisson.api.RScheduledFuture;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.RemoteInvocationOptions;
 import org.redisson.api.annotation.REntity;
 import org.redisson.api.annotation.RId;
+import org.redisson.api.annotation.RInject;
 import org.redisson.api.annotation.RRemoteAsync;
+
+import io.netty.util.concurrent.FutureListener;
 
 /**
  * 1.Remote service
@@ -23,10 +38,15 @@ import org.redisson.api.annotation.RRemoteAsync;
 public class RedissonDistributedServicesTest {
 	
 	public static void main(String[] args) {
-//		testRemoteRervice();
-		testLiveObjectService();
-		
-		RedissonUtil.shutdown();
+		try {
+//				testRemoteRervice();
+//				testLiveObjectService();
+				testDistributedExecutorService();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			RedissonUtil.shutdown();
+		}
 	}
 	
 /* 1.Remote service Start */
@@ -369,11 +389,146 @@ public class RedissonDistributedServicesTest {
 /* 2.Live Object service End */
 
 /* 3.Distributed executor service Start */
+
+	/**
+	 * Distributed executor service <br>
+	 * <p>
+	 * Redisson node don't need to have task classes in classpath. They are loaded automatically by Redisson node ClassLoader. 
+	 * Thus Redisson node reloading is not needed for each new task class.
+	 * 
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 * 
+	 */
+	public static void testDistributedExecutorService() throws InterruptedException, ExecutionException, TimeoutException {
+		RedissonClient redisson = RedissonUtil.getRedissonClient();
+		
+		// Tasks
+		RExecutorService executorService = redisson.getExecutorService("myExecutor");
+		Future<Long> future = executorService.submit(new CallableTask());
+		Long result = future.get(5, TimeUnit.SECONDS);	// TimeoutException
+		System.out.println(result);
+		
+		executorService.submit(new RunnableTask(123));
+		
+		// Extended asynchronous mode
+		RFuture<Long> submitAsync = executorService.submitAsync(new CallableTask());
+		submitAsync.addListener(new FutureListener<Long>() {
+
+			@Override
+			public void operationComplete(io.netty.util.concurrent.Future<Long> future) throws Exception {
+				// ...
+			}
+		});
+		
+		// Task execution cancellation
+		Future<Long> future1 = executorService.submit(new CallableTask4Cancel());
+		RFuture<Long> future2 = executorService.submitAsync(new CallableTask4Cancel());
+		future1.cancel(true);
+	}
 	
+	public static class CallableTask implements Callable<Long> {
+
+	    @RInject
+	    private RedissonClient redissonClient;
+
+	    @Override
+	    public Long call() throws Exception {
+	        RMap<String, Integer> map = redissonClient.getMap("myMap");
+	        map.put("k1", 3);
+	        map.put("k2", 5);
+	        Long result = 0L;
+	        for (Integer value : map.values()) {
+	            result += value;
+	        }
+	        return result;
+	    }
+
+	}
+	
+	public static class RunnableTask implements Runnable {
+
+	    @RInject
+	    private RedissonClient redissonClient;
+
+	    private long value;
+
+	    public RunnableTask() {
+	    }
+
+	    public RunnableTask(long value) {
+	        this.value = value;
+	    }
+
+	    @Override
+	    public void run() {
+	        RAtomicLong atomic = redissonClient.getAtomicLong("myAtomic");
+	        long l = atomic.addAndGet(value);
+	        System.out.println(l);
+	    }
+
+	}
+	
+	public static class CallableTask4Cancel implements Callable<Long> {
+
+	    @RInject
+	    private RedissonClient redissonClient;
+
+	    @Override
+	    public Long call() throws Exception {
+	        RMap<String, Integer> map = redissonClient.getMap("myMap");
+	        Long result = 0L;
+	        // map contains many entries
+	        for (Integer value : map.values()) {           
+	           if (Thread.currentThread().isInterrupted()) {
+	                // task has been canceled
+	                return null;
+	           }
+	           result += value;
+	        }
+	        return result;
+	    }
+
+	}
 
 /* 3.Distributed executor service End */
 
 /* 4.Distributed scheduled executor service Start */
+
+	/**
+	 * Distributed scheduled executor service <br>
+	 * Redisson node run jobs from Redis queue.
+	 * <p>
+	 * Redisson node don't need to have task classes in classpath. They are loaded automatically by Redisson node ClassLoader.
+	 * Thus Redisson node reloading is not needed for each new task class.
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
+	 * @throws TimeoutException 
+	 */
+	public static void testDistributedScheduledExecutorService() throws InterruptedException, ExecutionException, TimeoutException {
+		RedissonClient redisson = RedissonUtil.getRedissonClient();
+		
+		// Scheduling a task
+		RScheduledExecutorService executorService = redisson.getExecutorService("myExecutor");
+		ScheduledFuture<Long> future = executorService.schedule(new CallableTask(), 1, TimeUnit.MINUTES);
+		Long result = future.get(2, TimeUnit.MINUTES);
+		
+		ScheduledFuture<?> future1 = executorService.schedule(new RunnableTask(123), 10, TimeUnit.HOURS);
+		ScheduledFuture<?> future2 = executorService.scheduleAtFixedRate(new RunnableTask(123), 10, 25, TimeUnit.HOURS);
+		ScheduledFuture<?> future3 = executorService.scheduleWithFixedDelay(new RunnableTask(123), 5, 10, TimeUnit.HOURS);
+		
+		// Scheduling a task with cron expression
+		executorService.schedule(new RunnableTask(), CronSchedule.of("10 0/5 * * * ?"));
+		executorService.schedule(new RunnableTask(), CronSchedule.dailyAtHourAndMinute(10, 5));
+		executorService.schedule(new RunnableTask(), CronSchedule.weeklyOnDayAndHourAndMinute(12, 4, Calendar.MONDAY, Calendar.FRIDAY));
+		
+		// Task scheduling cancellation
+		RScheduledFuture<?> scheduleAsync = executorService.scheduleAsync(new CallableTask4Cancel(), 1, TimeUnit.HOURS);
+		scheduleAsync.cancel(true);
+		String taskId = scheduleAsync.getTaskId();
+		executorService.cancelScheduledTask(taskId);
+	}
 	
 	
 /* 4.Distributed scheduled executor service End */

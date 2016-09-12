@@ -16,15 +16,20 @@ import org.redisson.config.Config;
  * <p>
  * Redisson instance and Redisson objects are fully-thread safe.
  * <p>
+ * Redis commands mapping: Redis command - Redisson method <br>
+ * https://github.com/mrniko/redisson/wiki/11.-Redis-commands-mapping
+ * <p>
  * Redis server is a single-threaded application.
  * 
  * <p>
- * 1.RedissonOperationsTest.java
- * 2.RedissonDistributedObjectsTest.java
- * 3.RedissonDistributedCollectionsTest.java
- * 4.RedissonDistributedLocksAndSynchronizersTest.java
- * 5.RedissonDistributedServicesTest.java
- * 
+ * <ul>
+ * <li>1.RedissonOperationsTest.java
+ * <li>2.RedissonDistributedObjectsTest.java 
+ * <li>3.RedissonDistributedCollectionsTest.java
+ * <li>4.RedissonDistributedLocksAndSynchronizersTest.java
+ * <li>5.RedissonDistributedServicesTest.java
+ * <li>6.RedissonAdditionalFeaturesTest.java
+ * </ul>
  */
 public final class RedissonUtil {
 	
