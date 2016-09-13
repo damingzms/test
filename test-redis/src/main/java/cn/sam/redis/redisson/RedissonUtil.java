@@ -19,6 +19,9 @@ import org.redisson.config.Config;
  * Redis commands mapping: Redis command - Redisson method <br>
  * https://github.com/mrniko/redisson/wiki/11.-Redis-commands-mapping
  * <p>
+ * Standalone node:
+ * https://github.com/mrniko/redisson/wiki/12.-Standalone-node
+ * <p>
  * Redis server is a single-threaded application.
  * 
  * <p>
@@ -29,6 +32,7 @@ import org.redisson.config.Config;
  * <li>4.RedissonDistributedLocksAndSynchronizersTest.java
  * <li>5.RedissonDistributedServicesTest.java
  * <li>6.RedissonAdditionalFeaturesTest.java
+ * <li>7.RedissonIntegrationTest.java
  * </ul>
  */
 public final class RedissonUtil {
