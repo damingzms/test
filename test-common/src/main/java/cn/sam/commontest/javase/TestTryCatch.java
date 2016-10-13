@@ -27,8 +27,22 @@ public class TestTryCatch {
 //		return "normal";
 	}
 	
+	/**
+	 * 
+	 * @return finally
+	 */
+	public static String test3() {
+		try {
+			return "try";
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			return "finally";
+		}
+	}
+	
 	public static void main(String[] args) {
-		System.out.println(test2());
+		System.out.println(test3());
 	}
 
 }

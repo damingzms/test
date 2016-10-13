@@ -1,5 +1,6 @@
 package cn.sam.commontest.beanutils.apache;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,8 @@ import cn.sam.commontest.beanutils.bean.Apple;
 import cn.sam.commontest.beanutils.bean.Orange;
 
 public class TestBeanUtilsApache {
-
-	public static void main(String[] args) throws Exception {
+	
+	public static void test1() throws Exception {
 		Orange o = new Orange();
 		o.setColor("red");
 		o.setWeight(10);
@@ -47,6 +48,30 @@ public class TestBeanUtilsApache {
 //		PropertyUtils.copyProperties(o, a);
 //		BeanUtils.copyProperties(a2, o);
 //		BeanUtils.copyProperties(o, a);
+	}
+	
+	public static void test2() throws Exception {
+		Orange o = new Orange();
+		o.setColor("red");
+		o.setWeight(10);
+		o.setAttr("qq");
+		o.setApple(new Apple());
+		
+		Orange o1 = new Orange();
+//		BeanUtils.copyProperties(o1, o);
+		PropertyUtils.copyProperties(o1, o);
+
+		System.out.println(o1.getApple());
+		System.out.println(o1.getApple() == o.getApple());	// true
+
+		Orange o2 = new Orange();
+		org.springframework.beans.BeanUtils.copyProperties(o, o2);
+		System.out.println(o2.getApple());
+		System.out.println(o2.getApple() == o.getApple());	// true
+	}
+
+	public static void main(String[] args) throws Exception {
+		test2();
 	}
 
 }
