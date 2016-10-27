@@ -65,7 +65,7 @@ public class Application {
 
 	public static void main(String[] args) throws Exception {
 		JFrame frame = new JFrame("ZooInspector");
-		Component comp = new TextArea("  I am not a virus! 我是后台！");
+		Component comp = new TextArea("  我不是病毒，我是后台！");
 		frame.add(comp);
 		frame.setSize(250, 160);
 		frame.setVisible(true);
