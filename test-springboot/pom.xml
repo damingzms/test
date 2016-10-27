@@ -12,10 +12,6 @@
 	<artifactId>test-springboot</artifactId>
 	<name>test-springboot</name>
 
-	<properties>
-		<jdk-version>1.6</jdk-version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
