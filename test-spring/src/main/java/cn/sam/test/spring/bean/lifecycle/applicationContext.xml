@@ -8,13 +8,15 @@
             http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <bean id="beanFactoryPostProcessor" class="cn.sam.test.spring.bean.lifecycle.MyBeanFactoryPostProcessor" />
+    
+    <bean id="beanDefinitionRegistryPostProcessor" class="cn.sam.test.spring.bean.lifecycle.MyBeanDefinitionRegistryPostProcessor" />
 
 	<bean id="beanPostProcessor" class="cn.sam.test.spring.bean.lifecycle.MyBeanPostProcessor" />
 
 	<bean id="instantiationAwareBeanPostProcessor" class="cn.sam.test.spring.bean.lifecycle.MyInstantiationAwareBeanPostProcessor" />
 
-	<bean id="beanA" class="spring.lifecycle.BeanA" init-method="_init" destroy-method="_destory" p:name="beanA" />
+	<bean id="beanA" class="cn.sam.test.spring.bean.lifecycle.BeanA" init-method="_init" destroy-method="_destory" p:name="beanA" />
 
-    <bean id="beanB" class="spring.lifecycle.BeanB" init-method="_init" destroy-method="_destory" p:name="beanB" />
+    <bean id="beanB" class="cn.sam.test.spring.bean.lifecycle.BeanB" init-method="_init" destroy-method="_destory" p:name="beanB" />
 
 </beans>
