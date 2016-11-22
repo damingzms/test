@@ -9,6 +9,7 @@
 	<modules>
 		<module>test-common</module>
 		<module>test-concurrency</module>
+		<module>test-conversion</module>
 		<module>test-dependency</module>
 		<module>test-jpa</module>
 		<module>test-messaging</module>

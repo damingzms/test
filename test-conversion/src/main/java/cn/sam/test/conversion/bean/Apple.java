@@ -1,4 +1,4 @@
-package cn.sam.commontest.beanutils.bean;
+package cn.sam.test.conversion.bean;
 
 import java.util.List;
 

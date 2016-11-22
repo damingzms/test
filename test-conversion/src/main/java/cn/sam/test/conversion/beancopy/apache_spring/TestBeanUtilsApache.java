@@ -1,4 +1,4 @@
-package cn.sam.commontest.beanutils.apache;
+package cn.sam.test.conversion.beancopy.apache_spring;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 
-import cn.sam.commontest.beanutils.bean.Apple;
-import cn.sam.commontest.beanutils.bean.Orange;
+import cn.sam.test.conversion.bean.Apple;
+import cn.sam.test.conversion.bean.Orange;
 
 public class TestBeanUtilsApache {
 	
