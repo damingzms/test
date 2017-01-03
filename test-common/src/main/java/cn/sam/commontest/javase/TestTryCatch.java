@@ -41,8 +41,25 @@ public class TestTryCatch {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return finally
+	 */
+	public static void test4() {
+		for (int i = 0; i> 4; i++) {
+			try {
+				continue;
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				System.out.println("finally");	// 不会输出
+			}
+		}
+	}
+	
 	public static void main(String[] args) {
-		System.out.println(test3());
+//		System.out.println(test3());
+		test4();
 	}
 
 }
