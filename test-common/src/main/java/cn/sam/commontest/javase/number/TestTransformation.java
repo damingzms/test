@@ -28,8 +28,13 @@ public class TestTransformation {
 		System.out.println(d1);			//
 		System.out.println((long) d1);	// Long.MAX_VALUE
 	}
+
+	public static void testNumber2double() {
+		Number n = Integer.valueOf(10);
+		System.out.println((double) n);	// exception
+	}
 	
 	public static void main(String[] args) {
-		testFloat2Long();
+		testNumber2double();
 	}
 }
