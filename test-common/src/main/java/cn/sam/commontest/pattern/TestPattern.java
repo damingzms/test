@@ -17,11 +17,16 @@ public class TestPattern {
 //		System.out.println("group : " + m.group(1));
 //	}
 	
+//	public static void main(String[] args) {
+//		Matcher matcher = Pattern.compile("\\w{2}\\s(\\w*)\\s*\\w{2}\\d").matcher("hu hik5566 HK1/pn");
+//		if(matcher.find()){
+//			System.out.println(matcher.group());
+//			System.out.println(matcher.group(1));
+//		}
+//	}
+	
 	public static void main(String[] args) {
-		Matcher matcher = Pattern.compile("\\w{2}\\s(\\w*)\\s*\\w{2}\\d").matcher("hu hik5566 HK1/pn");
-		if(matcher.find()){
-			System.out.println(matcher.group());
-			System.out.println(matcher.group(1));
-		}
+		boolean matches = "13755555555".matches("1[3578]\\d{9}");
+		System.out.println(matches);
 	}
 }
