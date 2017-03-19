@@ -1,11 +1,11 @@
-package cn.sam.commontest.beanutils.dozer;
+package cn.sam.test.conversion.beancopy.dozer;
 
 import java.util.ArrayList;
 
 import org.dozer.DozerBeanMapper;
 
-import cn.sam.commontest.beanutils.bean.Apple;
-import cn.sam.commontest.beanutils.bean.Orange;
+import cn.sam.test.conversion.bean.Apple;
+import cn.sam.test.conversion.bean.Orange;
 
 public class Test {
 	public static final DozerBeanMapper MAPPER = new DozerBeanMapper();

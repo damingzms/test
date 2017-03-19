@@ -1,4 +1,4 @@
-package cn.sam.commontest.beanutils.dozer;
+package cn.sam.test.conversion.beancopy.dozer;
 
 public class Son extends Father {
 	

@@ -3,6 +3,8 @@ package cn.sam.commontest.pattern;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.util.PatternMatchUtils;
+
 public class TestPattern {
 //	public static void main(String[] args) {
 //		Pattern p=Pattern.compile("((\\d+)([a-z]+))"); 
@@ -29,4 +31,9 @@ public class TestPattern {
 		boolean matches = "13755555555".matches("1[3578]\\d{9}");
 		System.out.println(matches);
 	}
+	
+//	public static void main(String[] args) {
+//		boolean matches = "/test".matches("\\S*/test/\\S*");
+//		System.out.println(matches);
+//	}
 }
