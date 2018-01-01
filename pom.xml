@@ -21,6 +21,7 @@
 		<module>test-springboot</module>
 		<module>test-zookeeper</module>
 		<module>test-maven-plugin</module>
+		<module>test-finagle</module>
 	</modules>
 
 	<properties>
