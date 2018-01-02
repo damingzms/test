@@ -7,7 +7,7 @@
 		<artifactId>test-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>test-finagle</artifactId>
 	<packaging>jar</packaging>
 
@@ -22,6 +22,7 @@
 	</properties>
 
 	<dependencies>
+		<!-- 不同协议需要不同的依赖。如果只有thrift协议，则只需要finagle-thrift依赖  -->
 		<dependency>
 			<groupId>com.twitter</groupId>
 			<artifactId>finagle-http_${scala.version}</artifactId>
@@ -36,7 +37,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -44,19 +44,15 @@
 	<build>
 		<resources>
 			<resource>
-				<directory>src/main/scala</directory>
-			</resource>
-			<resource>
 				<directory>src/main/thrift</directory>
 			</resource>
 		</resources>
 
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.7.0</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
@@ -64,13 +60,14 @@
 				</configuration>
 			</plugin>
 
+			<!-- 根据IDL（*.thrift）生成代码 -->
 			<plugin>
 				<groupId>com.twitter</groupId>
 				<artifactId>scrooge-maven-plugin</artifactId>
-				<version>3.17.0</version>
+				<version>${finagle.version}</version>
 				<configuration>
 					<outputDirectory>src/main/thrift-gen</outputDirectory>
-					<language>java</language> <!-- default is scala -->
+					<language>scala</language> <!-- default is scala -->
 					<thriftOpts>
 						<!-- add other Scrooge command line options using thriftOpts -->
 						<thriftOpt>--finagle</thriftOpt>
@@ -95,7 +92,8 @@
 					</execution>
 				</executions>
 			</plugin>
-<!-- 
+
+			<!-- 编译scala文件（当配置scrooge生成scala代码时，需要此插件） -->
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
@@ -106,13 +104,9 @@
 						<arg>-deprecation</arg>
 						<arg>-encoding</arg>
 						<arg>utf8</arg>
-                        <arg>-explaintypes</arg>
+						<arg>-explaintypes</arg>
 					</args>
-                    <javacArgs>
-                        <javacArg>-Xlint:unchecked</javacArg>
-                        <javacArg>-Xlint:deprecation</javacArg>
-                    </javacArgs>
-                    <scalaVersion>${scala.full.version}</scalaVersion>
+					<scalaVersion>${scala.full.version}</scalaVersion>
 				</configuration>
 				<executions>
 					<execution>
@@ -132,7 +126,7 @@
 					</execution>
 				</executions>
 			</plugin>
- -->
+
 			<!-- 支持自定义的项目目录结构 -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
