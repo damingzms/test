@@ -17,6 +17,8 @@ import com.twitter.util.TimeoutException;
  * 
  * IDL（*.thrift）文件规范，以及使用Scrooge thrift linter工具检查文件内容是否符合规范：https://twitter.github.io/scrooge/Linter.html
  * 
+ * Scrooge与Finagle的整合：https://twitter.github.io/scrooge/Finagle.html
+ * 
  */
 public final class ThriftServer {
 
