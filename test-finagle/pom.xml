@@ -25,12 +25,32 @@
 		<!-- 不同协议需要不同的依赖。如果只有thrift协议，则只需要finagle-thrift依赖  -->
 		<dependency>
 			<groupId>com.twitter</groupId>
+			<artifactId>finagle-thrift_${scala.version}</artifactId>
+			<version>${finagle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twitter</groupId>
 			<artifactId>finagle-http_${scala.version}</artifactId>
 			<version>${finagle.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.twitter</groupId>
-			<artifactId>finagle-thrift_${scala.version}</artifactId>
+			<artifactId>finagle-memcached_${scala.version}</artifactId>
+			<version>${finagle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twitter</groupId>
+			<artifactId>finagle-mysql_${scala.version}</artifactId>
+			<version>${finagle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twitter</groupId>
+			<artifactId>finagle-redis_${scala.version}</artifactId>
+			<version>${finagle.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twitter</groupId>
+			<artifactId>finagle-stats_${scala.version}</artifactId>
 			<version>${finagle.version}</version>
 		</dependency>
 
@@ -67,7 +87,7 @@
 				<version>${finagle.version}</version>
 				<configuration>
 					<outputDirectory>src/main/thrift-gen</outputDirectory>
-					<language>scala</language> <!-- default is scala -->
+					<language>java</language> <!-- default is scala -->
 					<thriftOpts>
 						<!-- add other Scrooge command line options using thriftOpts -->
 						<thriftOpt>--finagle</thriftOpt>
@@ -94,7 +114,7 @@
 			</plugin>
 
 			<!-- 编译scala文件（当配置scrooge生成scala代码时，需要此插件） -->
-			<plugin>
+			<!-- <plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
 				<version>3.3.1</version>
@@ -125,8 +145,8 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-
+			</plugin> -->
+			
 			<!-- 支持自定义的项目目录结构 -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -140,6 +160,7 @@
 						</goals>
 						<configuration>
 							<sources>
+								<source>src/main/scala</source>
 								<source>src/main/thrift-gen/scrooge</source>
 							</sources>
 						</configuration>
