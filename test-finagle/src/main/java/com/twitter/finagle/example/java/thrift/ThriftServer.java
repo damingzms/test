@@ -26,6 +26,8 @@ import com.twitter.util.TimeoutException;
  * filters等的用法：/test-finagle/src/main/scala/com/twitter/finagle/example/thrift/ThriftServiceIfaceExample.scala
  * 
  * zookeeper集成：/test-finagle/src/main/scala/com/twitter/finagle/example/zookeeper
+ * 
+ * TODO 用的依然还是旧的api
  *
  */
 public final class ThriftServer {
