@@ -1,4 +1,4 @@
-package com.twitter.finagle.example.java.thrift;
+package com.twitter.finagle.example.java.thriftWithZk;
 
 import com.twitter.finagle.ListeningServer;
 import com.twitter.finagle.Thrift;
@@ -27,7 +27,7 @@ import com.twitter.util.TimeoutException;
  * 
  * zookeeper集成：/test-finagle/src/main/scala/com/twitter/finagle/example/zookeeper
  * 
- * TODO 用的依然还是旧的api
+ * TODO 用的依然还是旧的api，参考以上zookeeper集成，尝试使用非deprecated的api，然后学习使用filter等特性
  *
  */
 public final class ThriftServer {

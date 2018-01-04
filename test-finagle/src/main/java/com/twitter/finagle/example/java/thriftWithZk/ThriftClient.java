@@ -1,4 +1,4 @@
-package com.twitter.finagle.example.java.thrift;
+package com.twitter.finagle.example.java.thriftWithZk;
 
 import com.twitter.finagle.Thrift;
 import com.twitter.finagle.example.thriftjava.LoggerService;
@@ -14,7 +14,7 @@ public final class ThriftClient {
 	}
 
 	public static void main(String[] args) throws Exception {
-		LoggerService.ServiceIface client = Thrift.client().newIface("localhost:8080", LoggerService.ServiceIface.class);
+		LoggerService.ServiceIface client = Thrift.client().build("localhost:8080", LoggerService.ServiceIface.class);//newIface("localhost:8080", LoggerService.ServiceIface.class);
 		Future<String> response = client.log("插入订单", 2).onSuccess(new Function<String, BoxedUnit>() {
 			@Override
 			public BoxedUnit apply(String response) {
