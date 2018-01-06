@@ -81,12 +81,5 @@ public final class ThriftServer {
 		LoggerService.ServiceIface impl = new LoggerServiceImpl();
 		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, new InetSocketAddress(8080), new LoggerService.Service(impl));
 		Await.ready(server);
-		
-		Thrift.server().withLabel("finagle server").with
-		maxConcurrentRequests(maxConcurrentRequests).keepAlive(true)
-		.hostConnectionMaxIdleTime(Duration.fromMilliseconds(hostConnectionMaxIdleTime))
-		.readTimeout(Duration.fromMilliseconds(readTimeout))
-		//.tracer(ZipkinTracer.mk(scribeIP, scribePort,sr,1))
-		.requestTimeout(Duration.fromMilliseconds(requestTimeout))
 	}
 }
