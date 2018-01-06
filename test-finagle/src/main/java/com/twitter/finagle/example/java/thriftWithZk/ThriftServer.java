@@ -1,6 +1,8 @@
 package com.twitter.finagle.example.java.thriftWithZk;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 import com.twitter.finagle.ListeningServer;
 import com.twitter.finagle.Thrift;
@@ -81,9 +83,10 @@ public final class ThriftServer {
 		}
 	}
 
-	public static void main(String[] args) throws TimeoutException, InterruptedException {
+	public static void main(String[] args) throws TimeoutException, InterruptedException, UnknownHostException {
 		LoggerService.ServiceIface impl = new LoggerServiceImpl();
-		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, new InetSocketAddress(8081), new LoggerService.Service(impl));
+		InetSocketAddress addr = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), 8081);
+		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, addr, new LoggerService.Service(impl));
 		Await.ready(server);
 		
 //		Thrift.server().withLabel("finagle server").
