@@ -4,12 +4,16 @@ import java.net.InetSocketAddress;
 
 import com.twitter.finagle.ListeningServer;
 import com.twitter.finagle.Thrift;
+import com.twitter.finagle.builder.ServerBuilder;
+import com.twitter.finagle.builder.ServerConfig.Yes;
 import com.twitter.finagle.example.thriftjava.LoggerService;
 import com.twitter.finagle.example.thriftjava.ReadException;
 import com.twitter.util.Await;
 import com.twitter.util.Duration;
 import com.twitter.util.Future;
 import com.twitter.util.TimeoutException;
+
+import scala.runtime.Nothing$;
 
 /**
  * 需要设置scrooge-maven-plugin插件，根据IDL（*.thrift）生成java代码。见pom.xml文件
@@ -79,14 +83,18 @@ public final class ThriftServer {
 
 	public static void main(String[] args) throws TimeoutException, InterruptedException {
 		LoggerService.ServiceIface impl = new LoggerServiceImpl();
-		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, new InetSocketAddress(8080), new LoggerService.Service(impl));
+		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, new InetSocketAddress(8081), new LoggerService.Service(impl));
 		Await.ready(server);
 		
-		Thrift.server().withLabel("finagle server").with
-		maxConcurrentRequests(maxConcurrentRequests).keepAlive(true)
-		.hostConnectionMaxIdleTime(Duration.fromMilliseconds(hostConnectionMaxIdleTime))
-		.readTimeout(Duration.fromMilliseconds(readTimeout))
-		//.tracer(ZipkinTracer.mk(scribeIP, scribePort,sr,1))
-		.requestTimeout(Duration.fromMilliseconds(requestTimeout))
+//		Thrift.server().withLabel("finagle server").
+		
+//		ServerBuilder<Nothing$, Nothing$, Nothing$, Yes, Yes> bindTo = ServerBuilder.get()
+//		.name("finagle server").maxConcurrentRequests(100).keepAlive(true)
+//		.hostConnectionMaxIdleTime(Duration.fromMilliseconds(10000L))
+//		.readTimeout(Duration.fromMilliseconds(10000L))
+//		//.tracer(ZipkinTracer.mk(scribeIP, scribePort,sr,1))
+//		.requestTimeout(Duration.fromMilliseconds(10000L))
+//		.bindTo(new InetSocketAddress(8080));
 	}
+	
 }
