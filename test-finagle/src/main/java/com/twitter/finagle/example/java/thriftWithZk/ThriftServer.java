@@ -1,10 +1,13 @@
 package com.twitter.finagle.example.java.thriftWithZk;
 
+import java.net.InetSocketAddress;
+
 import com.twitter.finagle.ListeningServer;
 import com.twitter.finagle.Thrift;
 import com.twitter.finagle.example.thriftjava.LoggerService;
 import com.twitter.finagle.example.thriftjava.ReadException;
 import com.twitter.util.Await;
+import com.twitter.util.Duration;
 import com.twitter.util.Future;
 import com.twitter.util.TimeoutException;
 
@@ -31,6 +34,20 @@ import com.twitter.util.TimeoutException;
  *
  */
 public final class ThriftServer {
+
+	public static final String ZOOKEEPER_DEST = "test-zookeeper01.biostime.it:2181,test-zookeeper02.biostime.it:2181,test-zookeeper03.biostime.it:2181";
+	
+	public static final String SERVICE_PATH = "/finagle-test/services/echo";
+	
+    //e.g.:            zk!test-zookeeper01.biostime.it:2181,test-zookeeper02.biostime.it:2181,test-zookeeper03.biostime.it:2181!/finagle-test/services/echo/!0
+    //syntax:          schema!host!path!shardId
+    //schema:          for server, use zk, for client, use zk2
+    //host:            zookeeper connection string
+    //path:            service registration path in zookeeper
+    //shardId:         it's used internally by Twitter, can be set to 0 in most cases
+	public static final String PROVIDER_PATH = String.format("zk!%s!%s!0", ZOOKEEPER_DEST, SERVICE_PATH);
+	
+	public static final String CONSUMER_PATH = String.format("zk2!%s!%s", ZOOKEEPER_DEST, SERVICE_PATH);
 
 	private ThriftServer() {
 	}
@@ -62,7 +79,14 @@ public final class ThriftServer {
 
 	public static void main(String[] args) throws TimeoutException, InterruptedException {
 		LoggerService.ServiceIface impl = new LoggerServiceImpl();
-		ListeningServer server = Thrift.server().serveIface("localhost:8080", impl);
+		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, new InetSocketAddress(8080), new LoggerService.Service(impl));
 		Await.ready(server);
+		
+		Thrift.server().withLabel("finagle server").with
+		maxConcurrentRequests(maxConcurrentRequests).keepAlive(true)
+		.hostConnectionMaxIdleTime(Duration.fromMilliseconds(hostConnectionMaxIdleTime))
+		.readTimeout(Duration.fromMilliseconds(readTimeout))
+		//.tracer(ZipkinTracer.mk(scribeIP, scribePort,sr,1))
+		.requestTimeout(Duration.fromMilliseconds(requestTimeout))
 	}
 }
