@@ -6,16 +6,13 @@ import java.net.UnknownHostException;
 
 import com.twitter.finagle.ListeningServer;
 import com.twitter.finagle.Thrift;
-import com.twitter.finagle.builder.ServerBuilder;
-import com.twitter.finagle.builder.ServerConfig.Yes;
 import com.twitter.finagle.example.thriftjava.LoggerService;
 import com.twitter.finagle.example.thriftjava.ReadException;
+import com.twitter.finagle.example.thriftjava.TLogObjRequest;
+import com.twitter.finagle.example.thriftjava.TLogObjResponse;
 import com.twitter.util.Await;
-import com.twitter.util.Duration;
 import com.twitter.util.Future;
 import com.twitter.util.TimeoutException;
-
-import scala.runtime.Nothing$;
 
 /**
  * 需要设置scrooge-maven-plugin插件，根据IDL（*.thrift）生成java代码。见pom.xml文件
@@ -35,8 +32,6 @@ import scala.runtime.Nothing$;
  * filters等的用法：/test-finagle/src/main/scala/com/twitter/finagle/example/thrift/ThriftServiceIfaceExample.scala
  * 
  * zookeeper集成：/test-finagle/src/main/scala/com/twitter/finagle/example/zookeeper
- * 
- * TODO 用的依然还是旧的api，参考以上zookeeper集成，尝试使用非deprecated的api，然后学习使用filter等特性
  *
  */
 public final class ThriftServer {
@@ -65,7 +60,17 @@ public final class ThriftServer {
 		@Override
 		public Future<String> log(String message, int logLevel) {
 			System.out.println(String.format("[%s] Server received: '%s'", logLevel, message));
-			return Future.value(String.format("You've sent: ('%s', %s)", message, logLevel));
+			return Future.value(String.format("You've sent: ('%s', %s)" , logLevel, message));
+		}
+
+		@Override
+		public Future<TLogObjResponse> logObj(TLogObjRequest request) {
+			System.out.println(String.format("[%s] Server received message: '%s'", request.getLogLevel(), request.getMessage()));
+			
+			TLogObjResponse response = new TLogObjResponse();
+			response.setRespCode(200);
+			response.setRespDesc(String.format("Success! You've sent: ('%s', %s)", request.getLogLevel(), request.getMessage()));
+			return Future.value(response);
 		}
 
 		@Override
