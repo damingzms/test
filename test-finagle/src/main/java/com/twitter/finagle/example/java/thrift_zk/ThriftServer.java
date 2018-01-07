@@ -1,4 +1,4 @@
-package com.twitter.finagle.example.java.thriftWithZk;
+package com.twitter.finagle.example.java.thrift_zk;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
