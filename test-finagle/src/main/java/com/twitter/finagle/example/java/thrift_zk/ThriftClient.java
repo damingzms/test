@@ -1,6 +1,5 @@
 package com.twitter.finagle.example.java.thrift_zk;
 
-import com.twitter.finagle.IndividualRequestTimeoutException;
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
 import com.twitter.finagle.Thrift;
@@ -10,7 +9,6 @@ import com.twitter.finagle.example.thriftjava.TLogObjResponse;
 import com.twitter.finagle.service.RetryFilter;
 import com.twitter.finagle.service.RetryPolicy;
 import com.twitter.finagle.service.SimpleRetryPolicy;
-import com.twitter.finagle.service.TimeoutFilter;
 import com.twitter.finagle.stats.NullStatsReceiver;
 import com.twitter.finagle.thrift.ThriftClientRequest;
 import com.twitter.finagle.util.DefaultTimer;
@@ -33,12 +31,14 @@ public final class ThriftClient {
 		
 		// 1.初始化service
 		Service<ThriftClientRequest, byte[]> service = Thrift.client()
+				.withLabel("clientname")
 				.withSessionPool().maxSize(10)
-//				.withRequestTimeout(Duration.fromMilliseconds(8000L)) // 从测试效果看来，with方式和filter方式配置的timeout，效果一样，with方式输出的异常信息更详细
-//				.withre
+				.withSession().acquisitionTimeout(Duration.fromMilliseconds(5000L))
+				.withRequestTimeout(Duration.fromMilliseconds(8000L)) // 从测试效果看来，with方式和filter方式配置的timeout，效果一样，with方式输出的异常信息更详细
+//				.withTracer(tracer)
 				.newService(ThriftServer.CONSUMER_PATH);
 		
-//		// 2.filter, 注意filter的顺序，本例中，越后定义的filter越早运行，注意andThen方法
+		// 2.filter, 注意filter的顺序，本例中，越后定义的filter越早运行，注意andThen方法
 		// a.SimpleFilter
 		SimpleFilter<ThriftClientRequest, byte[]> simpleFilter = new SimpleFilter<ThriftClientRequest, byte[]>() {
 
@@ -52,9 +52,9 @@ public final class ThriftClient {
 
 		// b.timeout, filter的方式相比with的方式，可以做更多精细化配置
 		Timer defaultTimer = DefaultTimer.getInstance();
-		Duration timeout = Duration.fromMilliseconds(8000L);
-		TimeoutFilter<ThriftClientRequest, byte[]> timeoutFilter = new TimeoutFilter<>(timeout, new IndividualRequestTimeoutException(timeout), defaultTimer);
-		service = timeoutFilter.andThen(service);
+//		Duration timeout = Duration.fromMilliseconds(8000L);
+//		TimeoutFilter<ThriftClientRequest, byte[]> timeoutFilter = new TimeoutFilter<>(timeout, new IndividualRequestTimeoutException(timeout), defaultTimer);
+//		service = timeoutFilter.andThen(service);
 		
 		// c.retry, 简化客户端重试策略的措施：远程方法必须是幂等，或者规范远程方法返回的异常类型规范化
 		// TODO 怎样确定是否需要重试？怎样在服务器返回异常的时候重试？

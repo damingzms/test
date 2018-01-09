@@ -89,9 +89,14 @@ public final class ThriftServer {
 	}
 
 	public static void main(String[] args) throws TimeoutException, InterruptedException, UnknownHostException {
+
+		// 1.初始化service
 		LoggerService.ServiceIface impl = new LoggerServiceImpl();
+		LoggerService.Service service = new LoggerService.Service(impl);
+
+		// 3.Server and Announcing it in zookeeper
 		InetSocketAddress addr = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), 8081);
-		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, addr, new LoggerService.Service(impl));
+		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, addr, service);
 		Await.ready(server);
 		
 //		Thrift.server().withLabel("finagle server").
