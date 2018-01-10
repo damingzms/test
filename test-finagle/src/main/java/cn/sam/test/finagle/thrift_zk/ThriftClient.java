@@ -1,4 +1,4 @@
-package com.twitter.finagle.example.java.thrift_zk;
+package cn.sam.test.finagle.thrift_zk;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -35,8 +35,19 @@ public final class ThriftClient {
 				.withSessionPool().maxSize(10)
 				.withSession().acquisitionTimeout(Duration.fromMilliseconds(5000L))
 				.withRequestTimeout(Duration.fromMilliseconds(8000L)) // 从测试效果看来，with方式和filter方式配置的timeout，效果一样，with方式输出的异常信息更详细
+//				.withMonitor(monitor)
 //				.withTracer(tracer)
 				.newService(ThriftServer.CONSUMER_PATH);
+		
+//		ClientBuilder<ThriftClientRequest, byte[], Yes, Yes, Yes> clientBuilder = ClientBuilder
+//				.get()
+//				.codec(new ThriftClientFramedCodec(new TBinaryProtocol.Factory(), config, Option.<ClientId> empty(),
+//						false)).connectTimeout(Duration.fromMilliseconds(connectTimeout))
+//				.hostConnectionIdleTime(Duration.fromMilliseconds(hostConnectionIdleTime))
+//				.hostConnectionLimit(hostConnectionLimit).hostConnectionCoresize(hostConnectionCoresize)
+//				.hostConnectionMaxIdleTime(Duration.fromMilliseconds(hostConnectionMaxIdleTime))
+//				.timeout(Duration.fromMilliseconds(timeout)).retryPolicy(retryPolicy)// .retries(5)
+//				.cluster(cluster);
 		
 		// 2.filter, 注意filter的顺序，本例中，越后定义的filter越早运行，注意andThen方法
 		// a.SimpleFilter

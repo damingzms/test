@@ -12,7 +12,7 @@ public class Client {
 
 	public static void main(String[] args) throws Exception {
 
-		Service<Request, Response> client = Http.newService(":8081");
+		Service<Request, Response> client = Http.client().newService(":8081");
 
 		Request request = Request.apply(Method.Get(), "/");
 //		request.host("localhost");

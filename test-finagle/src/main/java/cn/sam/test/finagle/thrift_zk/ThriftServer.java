@@ -1,4 +1,4 @@
-package com.twitter.finagle.example.java.thrift_zk;
+package cn.sam.test.finagle.thrift_zk;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -11,6 +11,7 @@ import com.twitter.finagle.example.thriftjava.ReadException;
 import com.twitter.finagle.example.thriftjava.TLogObjRequest;
 import com.twitter.finagle.example.thriftjava.TLogObjResponse;
 import com.twitter.util.Await;
+import com.twitter.util.Duration;
 import com.twitter.util.Future;
 import com.twitter.util.TimeoutException;
 
@@ -25,9 +26,6 @@ import com.twitter.util.TimeoutException;
  * IDL（*.thrift）文件规范，以及使用Scrooge thrift linter工具检查文件内容是否符合规范：https://twitter.github.io/scrooge/Linter.html
  * <p>
  * Scrooge与Finagle的整合：https://twitter.github.io/finagle/guide/Protocols.html#using-finagle-thrift
- * 
- */
-/**
  * 
  * filters等的用法：/test-finagle/src/main/scala/com/twitter/finagle/example/thrift/ThriftServiceIfaceExample.scala
  * 
@@ -66,7 +64,6 @@ public final class ThriftServer {
 		@Override
 		public Future<TLogObjResponse> logObj(TLogObjRequest request) {
 			System.out.println(String.format("[%s] Server received message: '%s'", request.getLogLevel(), request.getMessage()));
-			
 			TLogObjResponse response = new TLogObjResponse();
 			response.setRespCode(200);
 			response.setRespDesc(String.format("Success! You've sent: ('%s', %s)", request.getLogLevel(), request.getMessage()));
@@ -96,13 +93,16 @@ public final class ThriftServer {
 
 		// 3.Server and Announcing it in zookeeper
 		InetSocketAddress addr = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), 8081);
-		ListeningServer server = Thrift.server().serveAndAnnounce(PROVIDER_PATH, addr, service);
+		ListeningServer server = Thrift.server()
+				.withAdmissionControl().concurrencyLimit(1, 0)
+				.withSession().maxIdleTime(Duration.fromMilliseconds(10000L))
+//				.withSession().maxLifeTime(timeout)
+//				.withMonitor(null)
+				.serveAndAnnounce(PROVIDER_PATH, addr, service);
 		Await.ready(server);
 		
-//		Thrift.server().withLabel("finagle server").
-		
 //		ServerBuilder<Nothing$, Nothing$, Nothing$, Yes, Yes> bindTo = ServerBuilder.get()
-//		.name("finagle server").maxConcurrentRequests(100).keepAlive(true)
+//		.name("finagle server").keepAlive(true)
 //		.hostConnectionMaxIdleTime(Duration.fromMilliseconds(10000L))
 //		.readTimeout(Duration.fromMilliseconds(10000L))
 //		//.tracer(ZipkinTracer.mk(scribeIP, scribePort,sr,1))

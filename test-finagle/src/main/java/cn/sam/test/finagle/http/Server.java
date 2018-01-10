@@ -19,7 +19,7 @@ public class Server {
 				return Future.value(res);
 			}
 		};
-		ListeningServer server = Http.serve(":8081", service);
+		ListeningServer server = Http.server().serve(":8081", service);
 		Await.ready(server);
 	}
 }
