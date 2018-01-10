@@ -94,6 +94,7 @@ public final class ThriftServer {
 		// 3.Server and Announcing it in zookeeper
 		InetSocketAddress addr = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), 8081);
 		ListeningServer server = Thrift.server()
+				.withLabel("finagle server")
 				.withAdmissionControl().concurrencyLimit(1, 0)
 				.withSession().maxIdleTime(Duration.fromMilliseconds(10000L))
 //				.withSession().maxLifeTime(timeout)

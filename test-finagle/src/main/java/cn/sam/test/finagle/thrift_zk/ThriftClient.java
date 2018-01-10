@@ -31,7 +31,7 @@ public final class ThriftClient {
 		
 		// 1.初始化service
 		Service<ThriftClientRequest, byte[]> service = Thrift.client()
-				.withLabel("clientname")
+				.withLabel("finagle client")
 				.withSessionPool().maxSize(10)
 				.withSession().acquisitionTimeout(Duration.fromMilliseconds(5000L))
 				.withRequestTimeout(Duration.fromMilliseconds(8000L)) // 从测试效果看来，with方式和filter方式配置的timeout，效果一样，with方式输出的异常信息更详细
