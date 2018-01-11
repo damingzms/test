@@ -99,6 +99,7 @@ public final class ThriftServer {
 				.withSession().maxIdleTime(Duration.fromMilliseconds(10000L))
 //				.withSession().maxLifeTime(timeout)
 //				.withMonitor(null)
+//				.withTracer(tracer)
 				.serveAndAnnounce(PROVIDER_PATH, addr, service);
 		Await.ready(server);
 		

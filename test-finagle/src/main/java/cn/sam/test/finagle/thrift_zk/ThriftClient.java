@@ -32,7 +32,9 @@ public final class ThriftClient {
 		// 1.初始化service
 		Service<ThriftClientRequest, byte[]> service = Thrift.client()
 				.withLabel("finagle client")
+				.withSessionPool().minSize(10)
 				.withSessionPool().maxSize(10)
+				.withSessionPool().maxWaiters(100)
 				.withSession().acquisitionTimeout(Duration.fromMilliseconds(5000L))
 				.withSession().maxIdleTime(Duration.fromMilliseconds(60000L))
 //				.withSession().maxLifeTime(20.seconds)
