@@ -34,6 +34,8 @@ public final class ThriftClient {
 				.withLabel("finagle client")
 				.withSessionPool().maxSize(10)
 				.withSession().acquisitionTimeout(Duration.fromMilliseconds(5000L))
+				.withSession().maxIdleTime(Duration.fromMilliseconds(60000L))
+//				.withSession().maxLifeTime(20.seconds)
 				.withRequestTimeout(Duration.fromMilliseconds(8000L)) // 从测试效果看来，with方式和filter方式配置的timeout，效果一样，with方式输出的异常信息更详细
 //				.withMonitor(monitor)
 //				.withTracer(tracer)
@@ -98,8 +100,8 @@ public final class ThriftClient {
 		
 		// 4.远程调用方法
 		// a.方法1
-		String logResp = Await.result(client.log("hello", 2));
-		System.out.println("Received response: " + logResp);
+//		String logResp = Await.result(client.log("hello", 2));
+//		System.out.println("Received response: " + logResp);
 		
 		// b.方法2
 		TLogObjRequest request = new TLogObjRequest();
