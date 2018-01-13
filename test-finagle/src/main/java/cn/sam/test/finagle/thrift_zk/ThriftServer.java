@@ -115,7 +115,7 @@ public final class ThriftServer {
 				.withAdmissionControl().concurrencyLimit(10, 5)
 				.withSession().maxIdleTime(Duration.fromMilliseconds(50000L))
 //				.withSession().maxLifeTime(timeout)
-				.withRequestTimeout(Duration.fromMilliseconds(5000L))
+				.withRequestTimeout(Duration.fromMilliseconds(5000L)) // 服务端使用ExecutorServiceFuturePool时才起作用。值应该设置成比客户端的RequestTimeout小
 //				.withMonitor(null)
 //				.withTracer(tracer)
 				.serveAndAnnounce(PROVIDER_PATH, addr, service);

@@ -78,13 +78,6 @@ public final class ThriftClient {
 			@Override
 			public boolean shouldRetry(Tuple2<ThriftClientRequest, Try<byte[]>> tuple) {
 				Try<byte[]> _try = tuple._2;
-//				try {
-//					Option<byte[]> option = _try.toOption();
-//					Object apply = _try.get();
-//					System.out.println(apply.toString());
-//				} catch (Throwable e) {
-//					e.printStackTrace();
-//				}
 				if (_try.isThrow() && !_try.toString().contains("com.twitter.finagle.ChannelClosedException")) {
 					return true;
 				}
