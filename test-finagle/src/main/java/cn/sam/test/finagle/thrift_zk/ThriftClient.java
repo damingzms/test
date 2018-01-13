@@ -99,8 +99,8 @@ public final class ThriftClient {
 		
 		// 4.远程调用方法
 		// a.方法1
-//		String logResp = Await.result(client.log("hello", 2));
-//		System.out.println("Received response: " + logResp);
+		String logResp = Await.result(client.log("hello", 2));
+		System.out.println("Received response: " + logResp);
 		
 		// b.方法2
 		TLogObjRequest request = new TLogObjRequest();

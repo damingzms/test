@@ -3,6 +3,10 @@ package cn.sam.test.finagle.thrift_zk;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.twitter.finagle.ListeningServer;
 import com.twitter.finagle.Thrift;
@@ -12,6 +16,7 @@ import com.twitter.finagle.example.thriftjava.TLogObjRequest;
 import com.twitter.finagle.example.thriftjava.TLogObjResponse;
 import com.twitter.util.Await;
 import com.twitter.util.Duration;
+import com.twitter.util.ExecutorServiceFuturePool;
 import com.twitter.util.Future;
 import com.twitter.util.TimeoutException;
 
@@ -47,6 +52,16 @@ public final class ThriftServer {
 	public static final String PROVIDER_PATH = String.format("zk!%s!%s!0", ZOOKEEPER_DEST, SERVICE_PATH);
 	
 	public static final String CONSUMER_PATH = String.format("zk2!%s!%s", ZOOKEEPER_DEST, SERVICE_PATH);
+	
+	private static final ExecutorServiceFuturePool FUTURE_POOL;
+	static {
+		int poolSize = 10;
+		int maximumPoolSize = 20;
+		int queueSize = 100;
+		int keepAliveTime = 900;
+		ExecutorService executor = new ThreadPoolExecutor(poolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(queueSize));
+		FUTURE_POOL = new ExecutorServiceFuturePool(executor);
+	}
 
 	private ThriftServer() {
 	}
@@ -63,11 +78,13 @@ public final class ThriftServer {
 
 		@Override
 		public Future<TLogObjResponse> logObj(TLogObjRequest request) {
-			System.out.println(String.format("[%s] Server received message: '%s'", request.getLogLevel(), request.getMessage()));
-			TLogObjResponse response = new TLogObjResponse();
-			response.setRespCode(200);
-			response.setRespDesc(String.format("Success! You've sent: ('%s', %s)", request.getLogLevel(), request.getMessage()));
-			return Future.value(response);
+			return FUTURE_POOL.apply(() -> {
+				System.out.println(String.format("[%s] Server received message: '%s'", request.getLogLevel(), request.getMessage()));
+				TLogObjResponse response = new TLogObjResponse();
+				response.setRespCode(200);
+				response.setRespDesc(String.format("Success! You've sent: ('%s', %s)", request.getLogLevel(), request.getMessage()));
+				return response;
+			});
 		}
 
 		@Override
@@ -96,7 +113,7 @@ public final class ThriftServer {
 		ListeningServer server = Thrift.server()
 				.withLabel("finagle server")
 				.withAdmissionControl().concurrencyLimit(10, 5)
-				.withSession().maxIdleTime(Duration.fromMilliseconds(10000L))
+				.withSession().maxIdleTime(Duration.fromMilliseconds(50000L))
 //				.withSession().maxLifeTime(timeout)
 				.withRequestTimeout(Duration.fromMilliseconds(5000L))
 //				.withMonitor(null)
