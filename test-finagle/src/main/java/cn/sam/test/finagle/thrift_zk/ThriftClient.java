@@ -3,6 +3,7 @@ package cn.sam.test.finagle.thrift_zk;
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
 import com.twitter.finagle.Thrift;
+import com.twitter.finagle.Thrift.Client;
 import com.twitter.finagle.example.thriftjava.LoggerService;
 import com.twitter.finagle.example.thriftjava.TLogObjRequest;
 import com.twitter.finagle.example.thriftjava.TLogObjResponse;
@@ -29,8 +30,8 @@ public final class ThriftClient {
 
 	public static void main(String[] args) throws Exception {
 		
-		// 1.初始化service
-		Service<ThriftClientRequest, byte[]> service = Thrift.client()
+		// 1.初始化Client
+		Client client = Thrift.client()
 				.withLabel("finagle client")
 				.withSessionPool().minSize(10)
 				.withSessionPool().maxSize(10)
@@ -41,9 +42,12 @@ public final class ThriftClient {
 				.withRequestTimeout(Duration.fromMilliseconds(8000L)) // 从测试效果看来，with方式和filter方式配置的timeout，效果一样，with方式输出的异常信息更详细
 //				.withMonitor(monitor)
 //				.withTracer(tracer)
-				.newService(ThriftServer.CONSUMER_PATH);
+				;
 		
-		// 2.filter, 注意filter的顺序，本例中，越后定义的filter越早运行，注意andThen方法
+		// 2.Service
+		Service<ThriftClientRequest, byte[]> service = client.newService(ThriftServer.CONSUMER_PATH);
+		
+		// 3.filter, 注意filter的顺序，本例中，越后定义的filter越早运行，注意andThen方法
 		// a.SimpleFilter
 		SimpleFilter<ThriftClientRequest, byte[]> simpleFilter = new SimpleFilter<ThriftClientRequest, byte[]>() {
 
@@ -87,19 +91,19 @@ public final class ThriftClient {
 		RetryFilter<ThriftClientRequest, byte[]> retryFilter = new RetryFilter<ThriftClientRequest, byte[]>(retryPolicy, defaultTimer, new NullStatsReceiver());
 		service = retryFilter.andThen(service);
 		
-		// 3.ServiceToClient
-		LoggerService.ServiceIface client = new LoggerService.ServiceToClient(service);
+		// 4.ServiceToClient
+		LoggerService.ServiceIface serviceIface = new LoggerService.ServiceToClient(service);
 		
-		// 4.远程调用方法
+		// 5.远程调用方法
 		// a.方法1
-		String logResp = Await.result(client.log("hello", 2));
+		String logResp = Await.result(serviceIface.log("hello", 2));
 		System.out.println("Received response: " + logResp);
 		
 		// b.方法2
 		TLogObjRequest request = new TLogObjRequest();
 		request.setLogLevel(1);
 		request.setMessage("hi");
-		Future<TLogObjResponse> logObjResp = client.logObj(request);
+		Future<TLogObjResponse> logObjResp = serviceIface.logObj(request);
 		logObjResp.onSuccess(new Function<TLogObjResponse, BoxedUnit>() {
 			
 			@Override
