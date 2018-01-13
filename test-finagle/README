@@ -61,6 +61,6 @@ Finagle + Thrift + Scrooge + Zookeeper
 	包括服务接口的实现、实现类对象转换成Finagle Service、创建并配置ListeningServer、发布至Zookeeper等
 	
 6.编写Client：/test-finagle/src/main/java/cn/sam/test/finagle/thrift_zk/ThriftClient.java
-	包括初始化并配置初始化Client、读取Zookeeper并创建Service、Service应用Filter、Service转换成具体接口、方法远程调用等
+	包括初始化并配置Client、读取Zookeeper并创建Service、Service应用Filter、Service转换成具体接口、方法远程调用等
 	
 	
