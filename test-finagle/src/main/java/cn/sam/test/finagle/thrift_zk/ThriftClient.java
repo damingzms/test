@@ -43,16 +43,6 @@ public final class ThriftClient {
 //				.withTracer(tracer)
 				.newService(ThriftServer.CONSUMER_PATH);
 		
-//		ClientBuilder<ThriftClientRequest, byte[], Yes, Yes, Yes> clientBuilder = ClientBuilder
-//				.get()
-//				.codec(new ThriftClientFramedCodec(new TBinaryProtocol.Factory(), config, Option.<ClientId> empty(),
-//						false)).connectTimeout(Duration.fromMilliseconds(connectTimeout))
-//				.hostConnectionIdleTime(Duration.fromMilliseconds(hostConnectionIdleTime))
-//				.hostConnectionLimit(hostConnectionLimit).hostConnectionCoresize(hostConnectionCoresize)
-//				.hostConnectionMaxIdleTime(Duration.fromMilliseconds(hostConnectionMaxIdleTime))
-//				.timeout(Duration.fromMilliseconds(timeout)).retryPolicy(retryPolicy)// .retries(5)
-//				.cluster(cluster);
-		
 		// 2.filter, 注意filter的顺序，本例中，越后定义的filter越早运行，注意andThen方法
 		// a.SimpleFilter
 		SimpleFilter<ThriftClientRequest, byte[]> simpleFilter = new SimpleFilter<ThriftClientRequest, byte[]>() {
@@ -88,6 +78,13 @@ public final class ThriftClient {
 			@Override
 			public boolean shouldRetry(Tuple2<ThriftClientRequest, Try<byte[]>> tuple) {
 				Try<byte[]> _try = tuple._2;
+//				try {
+//					Option<byte[]> option = _try.toOption();
+//					Object apply = _try.get();
+//					System.out.println(apply.toString());
+//				} catch (Throwable e) {
+//					e.printStackTrace();
+//				}
 				if (_try.isThrow() && !_try.toString().contains("com.twitter.finagle.ChannelClosedException")) {
 					return true;
 				}

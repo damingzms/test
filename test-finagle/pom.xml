@@ -53,6 +53,13 @@
 			<artifactId>finagle-stats_${scala.version}</artifactId>
 			<version>${finagle.version}</version>
 		</dependency>
+		
+		<!-- zookeeper -->
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>finagle-serversets_${scala.version}</artifactId>
+            <version>${finagle.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>junit</groupId>

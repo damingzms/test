@@ -16,6 +16,10 @@ import com.twitter.util.Future;
 import com.twitter.util.TimeoutException;
 
 /**
+ * 
+ * 学习笔记：/notes/服务治理/finagle/Finagle
+ * <p>
+ * 
  * 需要设置scrooge-maven-plugin插件，根据IDL（*.thrift）生成java代码。见pom.xml文件
  * <p>
  * Scrooge is meant to be a replacement for the Apache Thrift code generator, and generates conforming, binary-compatible codecs by building on top of libthrift.<br>
@@ -26,10 +30,6 @@ import com.twitter.util.TimeoutException;
  * IDL（*.thrift）文件规范，以及使用Scrooge thrift linter工具检查文件内容是否符合规范：https://twitter.github.io/scrooge/Linter.html
  * <p>
  * Scrooge与Finagle的整合：https://twitter.github.io/finagle/guide/Protocols.html#using-finagle-thrift
- * 
- * filters等的用法：/test-finagle/src/main/scala/com/twitter/finagle/example/thrift/ThriftServiceIfaceExample.scala
- * 
- * zookeeper集成：/test-finagle/src/main/scala/com/twitter/finagle/example/zookeeper
  *
  */
 public final class ThriftServer {
@@ -95,21 +95,14 @@ public final class ThriftServer {
 		InetSocketAddress addr = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), 8081);
 		ListeningServer server = Thrift.server()
 				.withLabel("finagle server")
-				.withAdmissionControl().concurrencyLimit(1, 0)
+				.withAdmissionControl().concurrencyLimit(10, 5)
 				.withSession().maxIdleTime(Duration.fromMilliseconds(10000L))
 //				.withSession().maxLifeTime(timeout)
+				.withRequestTimeout(Duration.fromMilliseconds(5000L))
 //				.withMonitor(null)
 //				.withTracer(tracer)
 				.serveAndAnnounce(PROVIDER_PATH, addr, service);
 		Await.ready(server);
-		
-//		ServerBuilder<Nothing$, Nothing$, Nothing$, Yes, Yes> bindTo = ServerBuilder.get()
-//		.name("finagle server").keepAlive(true)
-//		.hostConnectionMaxIdleTime(Duration.fromMilliseconds(10000L))
-//		.readTimeout(Duration.fromMilliseconds(10000L))
-//		//.tracer(ZipkinTracer.mk(scribeIP, scribePort,sr,1))
-//		.requestTimeout(Duration.fromMilliseconds(10000L))
-//		.bindTo(new InetSocketAddress(8080));
 	}
 	
 }
