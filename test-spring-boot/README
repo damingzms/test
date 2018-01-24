@@ -1,0 +1,3 @@
+一个Spring Boot最基本的pom.xml配置，和程序入口类的配置。具体应用时，应该根据具体功能添加相应的依赖（如：org.springframework.boot:spring-boot-starter-*）
+
+这里以web项目作为范例，并添加了依赖：org.springframework.boot:spring-boot-starter-web
