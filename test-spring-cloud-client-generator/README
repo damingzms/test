@@ -6,6 +6,8 @@ Spring Cloud 客户端生成器，生成的客户端项目，让Spring Cloud微�
 生成Factory类文件
 生成Transformer类文件
 
+注意：生成的文件会覆盖掉相同路径下的同名文件
+
 
 还在不断完善中。。。
 
