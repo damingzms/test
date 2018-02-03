@@ -25,7 +25,7 @@ public class Transformer {
 	@Autowired
 	private ServiceFactory factory;
 
-	@Around("execution(* cn.sam.test.springcloud.client.service.*(..))")
+	@Around("execution(* cn.sam.test.springcloud.client.service.*.*(..))")
 	public Object transform(ProceedingJoinPoint pjp) throws Exception {
 		Object service = pjp.getTarget();
 		Class<?> serviceClass = AopUtils.getTargetClass(service);
