@@ -1,3 +1,18 @@
 Spring Cloud 客户端生成器，生成的客户端项目，让Spring Cloud微服务接口调用起来跟调用一个本地方法一样简单
+运行过程：
+根据模板生成pom.xml文件
+生成DTO类文件
+生成Service类文件
+生成Factory类文件
+生成Transformer类文件
+
 
 还在不断完善中。。。
+
+逻辑
+1、接口支持多参数
+
+代码生成
+1、模板文件，替代模板文件中的placeholder   DONE
+1、搜索所有带有@Controller或@RestController注解的类，怎样高效地根据注解获得类       DONE
+2、生成DTO，如何判断原始数据类型（包括String和包装类）

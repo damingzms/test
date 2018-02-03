@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Bean;
 public class Server {
 	
 	@Bean
-	public ServiceFactory serviceFactory() {
-		ServiceFactory serviceFactory = new ServiceFactory();
-		serviceFactory.setPort(8080);
-		return serviceFactory;
+	public ExampleServiceFactory exampleServiceFactory() {
+		ExampleServiceFactory exampleServiceFactory = new ExampleServiceFactory();
+		exampleServiceFactory.setPort(8080);
+		return exampleServiceFactory;
 	}
 	
 }

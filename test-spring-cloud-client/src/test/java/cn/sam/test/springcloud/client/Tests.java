@@ -14,7 +14,7 @@ import cn.sam.test.springcloud.client.dto.User;
 public class Tests {
 	
 	@Autowired
-	private ServiceFactory factory;
+	private ExampleServiceFactory factory;
 
 	@Test
 	public void test() {
