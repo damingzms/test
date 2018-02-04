@@ -10,9 +10,9 @@ Spring Cloud 客户端生成器，生成的客户端项目，让Spring Cloud微�
 
 
 还在不断完善中。。。
-
-逻辑
 1、接口支持多参数
+2、配置pom的distributionManagement
+3、Transformer中切面（Aspect）的切入点（Pointcut）包名，有极少的可能性会跟Spring消费者项目（Consumer）包名冲突
 
 代码生成
 1、模板文件，替代模板文件中的placeholder   DONE

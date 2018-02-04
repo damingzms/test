@@ -45,36 +45,35 @@ public class GenerationMojo extends AbstractMojo {
 	private String basePath;
 	
 	/**
-	 * 生成DTO类目标包
+	 * 生成DTO类目标包。generatingDto = true时才有效。defaultValue中的“-”符号会替换成“.”
      */
-	@Parameter(defaultValue = "${project.groupId}.client.dto")
+	@Parameter(defaultValue = "${project.groupId}.${project.artifactId}.client.dto")
 	private String dtoPkg;
 	
 	/**
-	 * 生成service类目标包
+	 * 生成service类目标包。defaultValue中的“-”符号会替换成“.”
      */
-	@Parameter(defaultValue = "${project.groupId}.client.service")
+	@Parameter(defaultValue = "${project.groupId}.${project.artifactId}.client.service")
 	private String servicePkg;
 	
 	public void execute() throws MojoExecutionException {
 		getLog().info("Generating Spring Cloud client...");
-		getLog().warn(generatingPom + "");
-		getLog().warn(generatingDto + "");
-		getLog().warn(groupId);
-		getLog().warn(artifactId);
-		getLog().warn(version);
-		getLog().warn(basePath);
-		getLog().warn(servicePkg);
 		
-		// pom.xml
+		// prepare
+		dtoPkg = dtoPkg.replace('-', '.');
+		servicePkg = servicePkg.replace('-', '.');
 		
-		// ServiceFactory.java，将移到独立jar，不再动态生成
+		// generate pom
 		
-		// Transformer.java，将移到独立jar，不再动态生成
+		// scan Controller
 		
-		// DTO
+		// generate DTOs
 		
-		// Service
+		// generate Services
+		
+		// generate Factory
+		
+		// generate Transformer
 		
 		getLog().info("Generated Spring Cloud client successfully.");
 	}

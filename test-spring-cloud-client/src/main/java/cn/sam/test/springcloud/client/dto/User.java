@@ -1,5 +1,6 @@
 package cn.sam.test.springcloud.client.dto;
 
+@Setter
 public class User {
 	
 	private String name;
