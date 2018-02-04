@@ -6,7 +6,9 @@ Spring Cloud 客户端生成器，生成的客户端项目，让Spring Cloud微�
 生成Factory类文件
 生成Transformer类文件
 
-注意：生成的文件会覆盖掉相同路径下的同名文件
+注意：
+1.默认扫描名为groupId参数值的包及其子包下面的Controller和DTO，可以自定义包名
+2.相同路径下原有的同名文件将会被删除
 
 
 还在不断完善中。。。
@@ -15,6 +17,6 @@ Spring Cloud 客户端生成器，生成的客户端项目，让Spring Cloud微�
 3、Transformer中切面（Aspect）的切入点（Pointcut）包名，有极少的可能性会跟Spring消费者项目（Consumer）包名冲突
 
 代码生成
-1、模板文件，替代模板文件中的placeholder   DONE
-1、搜索所有带有@Controller或@RestController注解的类，怎样高效地根据注解获得类       DONE
-2、生成DTO，如何判断原始数据类型（包括String和包装类）
+1、模板文件，替代模板文件中的placeholder   DONE: Freemarker
+1、搜索所有带有@Controller或@RestController注解的类，怎样高效地根据注解获得类       DONE: Google Reflection
+2、生成DTO，如何判断原始数据类型（包括String和包装类）    DONE: 不用判断，只生成指定包下面的DTO

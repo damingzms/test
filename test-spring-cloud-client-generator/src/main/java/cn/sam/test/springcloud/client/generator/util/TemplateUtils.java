@@ -27,4 +27,9 @@ public final class TemplateUtils {
 		return FREEMARKER_CFG;
 	}
 	
+	public static String templateName2FileName(String templateName) {
+		int endIndex = templateName.lastIndexOf(TEMPLATE_NAME_POSTFIX);
+		return templateName.substring(0, endIndex);
+	}
+	
 }

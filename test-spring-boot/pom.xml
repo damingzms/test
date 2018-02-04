@@ -35,9 +35,6 @@
 				<groupId>cn.sam.test</groupId>
 				<artifactId>test-spring-cloud-client-generator</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
-				<configuration>
-					<basePath>/src/main/thrift</basePath>
-				</configuration>
 				<executions>
 					<execution>
 						<phase>process-sources</phase>
