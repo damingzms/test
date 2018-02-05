@@ -14,12 +14,12 @@ public class PathExample {
     }
 
     @RequestMapping("testString")
-    String testString(@RequestBody String name) {
+    String testString(String name) {
         return "Hello " + name + "!";
     }
 
     @RequestMapping("testLong")
-    String testLong(@RequestBody Long name) {
+    String testLong(Long name) {
         return "Hello " + name + "!";
     }
 

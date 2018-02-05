@@ -1,6 +1,7 @@
 package cn.sam.test.springcloud.client;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,8 @@ public class Transformer {
 	private Map<String, URI> uriCache = new HashMap<>();
 	
 	private Map<String, Class<?>> responseTypeCache = new HashMap<>();
+	
+	private String dtoPkg = "cn.sam.test.springcloud.client.dto";
 	
 	@Autowired
 	private ServiceFactory factory;
@@ -123,10 +126,21 @@ public class Transformer {
 		}
 		
 		// request, TODO 多参数支持
-		Object request = null;
+		Map<String, Object> request = new HashMap<>();
 		Object[] args = pjp.getArgs();
+		Parameter[] parameters = method.getParameters();
 		if (args != null && args.length > 0) {
-			request = args[0];
+			for (int i = 0; i< args.length; i++) {
+				Object arg = args[i];
+				Parameter parameter = parameters[i];
+				if (arg != null) {
+					if (arg.getClass().getPackage().getName().equals(dtoPkg)) {
+						request.putAll(Utils.bean2Map(arg));
+					} else {
+						request.put(parameter.getName(), arg);
+					}
+				}
+			}
 		}
 
 		RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
