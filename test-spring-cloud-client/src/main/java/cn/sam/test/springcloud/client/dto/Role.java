@@ -7,12 +7,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class User {
+public class Role {
 	
-	private String name;
+	private String roleName;
 	
-	private Date birthday;
+	private Date createdDate;
 	
-	private Role role;
+//	private User user;
 	
 }
