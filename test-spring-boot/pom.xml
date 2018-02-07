@@ -35,9 +35,11 @@
 				<groupId>cn.sam.test</groupId>
 				<artifactId>test-spring-cloud-client-generator</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
+				<configuration>
+					<packagesToScan>cn.sam.test.springboot</packagesToScan>
+				</configuration>
 				<executions>
 					<execution>
-						<phase>process-sources</phase>
 						<goals>
 							<goal>generate</goal>
 						</goals>

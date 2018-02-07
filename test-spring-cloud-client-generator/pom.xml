@@ -30,10 +30,27 @@
 			<version>3.5.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+			<version>3.0-alpha-2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
 		
 		<dependency>
-		    <groupId>org.reflections</groupId>
-		    <artifactId>reflections</artifactId>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
 			<version>0.9.11</version>
 		</dependency>
 
@@ -42,7 +59,7 @@
 			<artifactId>javapoet</artifactId>
 			<version>1.10.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
