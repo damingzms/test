@@ -3,6 +3,7 @@ package cn.sam.test.springcloud.client.generator;
 import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 import javax.lang.model.element.Modifier;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,8 +31,8 @@ import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,15 +41,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Predicate;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.TypeSpec.Builder;
 
 import cn.sam.test.springcloud.client.generator.util.FileUtils;
 import cn.sam.test.springcloud.client.generator.util.TemplateUtils;
 import freemarker.template.Template;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -187,8 +192,8 @@ public class GenerationMojo extends AbstractMojo {
 			genPom();
 			
 			// JAVAFILES
-			Map<Class<?>, ClassName> dtoClassNameMap = new HashMap<>();
 			Map<Class<?>, JavaFile> dtoJavaFileMap = new HashMap<>();
+			Map<Class<?>, ClassName> dtoClassNameMap = new HashMap<>();
 			List<JavaFile> serviceJavaFiles = new ArrayList<>();
 			Map<String, Integer> dtoNameCountMap = new HashMap<>();
 			Map<String, Integer> serviceNameCountMap = new HashMap<>();
@@ -233,22 +238,12 @@ public class GenerationMojo extends AbstractMojo {
 					for (Method method : methods) {
 						
 						// RESPONSE DTO
-						ClassName returnClassName = null;
 						Class<?> returnType = method.getReturnType();
-						if (!dtoJavaFileMap.containsKey(returnType)) {
-
-							// dto class
-							
-						}
+						TypeName returnClassName = genDtoJavaFile(dtoJavaFileMap, dtoClassNameMap, dtoNameCountMap, returnType);;
 						
 						// service method
 						com.squareup.javapoet.MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder(method.getName())
-								.addModifiers(Modifier.PUBLIC);
-						if (returnClassName != null) {
-							methodSpecBuilder.returns(returnClassName);
-						} else {
-							methodSpecBuilder.returns(returnType);
-						}
+								.addModifiers(Modifier.PUBLIC).returns(returnClassName);
 						
 						// service method annotation
 						RequestMapping methodRequestMappingAnno = method.getAnnotation(RequestMapping.class);
@@ -257,15 +252,13 @@ public class GenerationMojo extends AbstractMojo {
 
 						// service method parameter
 						java.lang.reflect.Parameter[] parameters = method.getParameters();
-						if (parameters != null) {
+						if (parameters != null && parameters.length > 0) {
 							List<ParameterSpec> parameterSpecList = new ArrayList<>();
 							for (java.lang.reflect.Parameter parameter : parameters) {
 								
 								// REQUEST DTO
-								ClassName parameterClassName = null;
 								Class<?> parameterType = parameter.getType();
-//								if (dtoClasses.add(returnType)) {
-//								}
+								TypeName parameterClassName = genDtoJavaFile(dtoJavaFileMap, dtoClassNameMap, dtoNameCountMap, parameterType);
 								
 								// service method parameter
 								String name = null;
@@ -279,12 +272,7 @@ public class GenerationMojo extends AbstractMojo {
 								if (StringUtils.isEmpty(name)) {
 									name = parameter.getName();
 								}
-								com.squareup.javapoet.ParameterSpec.Builder parameterSpecBuilder = null;
-								if (parameterClassName != null) {
-									parameterSpecBuilder = ParameterSpec.builder(parameterClassName, name, new Modifier[]{});
-								} else {
-									parameterSpecBuilder = ParameterSpec.builder(parameterType, name, new Modifier[]{});
-								}
+								com.squareup.javapoet.ParameterSpec.Builder parameterSpecBuilder = ParameterSpec.builder(parameterClassName, name, new Modifier[]{});
 								
 								// service method parameter annotation
 								List<AnnotationSpec> parameterAnnotationSpecList = new ArrayList<>();
@@ -304,6 +292,11 @@ public class GenerationMojo extends AbstractMojo {
 								parameterSpecList.add(parameterSpecBuilder.build());
 							}
 							methodSpecBuilder.addParameters(parameterSpecList);
+						}
+
+						// service method code
+						if (returnType != void.class) {
+							methodSpecBuilder.addStatement("return null");
 						}
 						
 						serviceTypeSpecBuilder.addMethod(methodSpecBuilder.build());
@@ -328,6 +321,7 @@ public class GenerationMojo extends AbstractMojo {
 
 			log.info("Successfully Generated Spring Cloud client project: " + baseDirFile.getAbsolutePath());
 		} catch (Throwable e) {
+			log.error(e);
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
 	}
@@ -345,10 +339,14 @@ public class GenerationMojo extends AbstractMojo {
 		factoryDirFile = new File(srcDirFile, factoryPkg.replace('.', File.separatorChar));
 	}
 	
-	private ClassName genDtoJavaFile(Map<Class<?>, JavaFile> javaFileMap, Map<String, Integer> nameCountMap, Class<?> clazz) {
-		String className = clazz.getName();
-		if (!className.startsWith(packagesToScan)) {
-			return null;
+	private TypeName genDtoJavaFile(Map<Class<?>, JavaFile> javaFileMap, Map<Class<?>, ClassName> classNameMap, Map<String, Integer> nameCountMap, Class<?> clazz) throws Exception {
+		if (classNameMap.containsKey(clazz)) {
+			return classNameMap.get(clazz);
+		}
+		String fullName = clazz.getName();
+		if (!fullName.startsWith(packagesToScan) || fullName.startsWith("java") || fullName.startsWith("javax")
+				|| fullName.startsWith("org.springframework")) {
+			return TypeName.get(clazz);
 		}
 		
 		// name
@@ -364,30 +362,119 @@ public class GenerationMojo extends AbstractMojo {
 		}
 		
 		// type
+		ClassName className = ClassName.get(dtoPkg, dtoName);
+		classNameMap.put(clazz, className); // 此语句需要放到递归调用之前，否则互相嵌套的DTO类会出现死循环
 		Builder dtoTypeSpecBuilder = null;
 		if (clazz.isInterface()) {
 			dtoTypeSpecBuilder = TypeSpec.interfaceBuilder(dtoName);
-
-//		    .addField(FieldSpec.builder(String.class, "ONLY_THING_THAT_IS_CONSTANT")
-//		        .addModifiers(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-//		        .initializer("$S", "change")
-//		        .build())
 		} else if (clazz.isEnum()) {
-			dtoTypeSpecBuilder = TypeSpec.enumBuilder(dtoName).addAnnotation(Getter.class);
-			Enum<?>[] enumConstants = (Enum<?>[]) clazz.getEnumConstants();
-			if (enumConstants != null) {
-				for (Enum<?> enumConstant : enumConstants) {
-//					dtoTypeSpecBuilder.addEnumConstant(enumConstant.name());
-				}
-			}
-//			ReflectionUtils.
+			dtoTypeSpecBuilder = TypeSpec.enumBuilder(dtoName).addAnnotation(Getter.class).addAnnotation(AllArgsConstructor.class);
 		} else {
 			dtoTypeSpecBuilder = TypeSpec.classBuilder(dtoName).addAnnotation(Getter.class).addAnnotation(Setter.class);
 		}
 		dtoTypeSpecBuilder.addModifiers(Modifier.PUBLIC);
 		
-		Class<?> superclass = clazz.getSuperclass();
-		return ClassName.get(dtoPkg, dtoName);
+		// super type
+		Class<?>[] interfaces = clazz.getInterfaces();
+		if (interfaces != null && interfaces.length > 0) {
+			for (Class<?> superInterface : interfaces) {
+				TypeName superClassName = genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, superInterface);
+				dtoTypeSpecBuilder.addSuperinterface(superClassName);
+			}
+		}
+		if (!clazz.isEnum()) {  // only classes have super classes, not ENUM
+			Class<?> superclass = clazz.getSuperclass();
+			if (superclass != null) {
+				TypeName superClassName = genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, superclass);
+				dtoTypeSpecBuilder.superclass(superClassName);
+			}
+		}
+		
+		// field
+		Field[] fields = clazz.getDeclaredFields();
+		if (fields != null && fields.length > 0) {
+			List<FieldSpec> fieldSpecList = new ArrayList<>();
+			for (Field field : fields) {
+				
+				// modifier
+				List<Modifier> modifierList = new ArrayList<>();
+				int modifiers = field.getModifiers();
+				if (java.lang.reflect.Modifier.isPublic(modifiers)) modifierList.add(Modifier.PUBLIC);
+				if (java.lang.reflect.Modifier.isPrivate(modifiers)) modifierList.add(Modifier.PRIVATE);
+				if (java.lang.reflect.Modifier.isProtected(modifiers)) modifierList.add(Modifier.PROTECTED);
+				if (java.lang.reflect.Modifier.isStatic(modifiers)) {
+					modifierList.add(Modifier.STATIC);
+					
+					// 排除掉Enum的Constant和一些原生的属性
+					if (clazz.isEnum()) {
+						continue;
+					}
+				}
+				if (java.lang.reflect.Modifier.isFinal(modifiers)) modifierList.add(Modifier.FINAL);
+				
+				// field type
+				Class<?> fieldType = field.getType();
+				TypeName fieldClassName = genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, fieldType);
+				
+				// name
+				String name = field.getName();
+				
+				com.squareup.javapoet.FieldSpec.Builder fieldSpecBuilder = FieldSpec.builder(fieldClassName, name, modifierList.toArray(new Modifier[]{}));
+				
+				// value，只支持静态成员属性，只支持原始类型、包装类和、String、Enum
+				if (modifierList.contains(Modifier.STATIC)) {
+					Object value = field.get(null);
+					if (value != null) {
+						if (ClassUtils.isPrimitiveOrWrapper(fieldType) || fieldType == String.class) {
+							fieldSpecBuilder.initializer("new $T($S)", fieldClassName, value.toString());
+						} else if (fieldType.getSuperclass() == Enum.class) {
+							fieldSpecBuilder.initializer("$T.$L", fieldClassName, ((Enum<?>) value).name());
+						}
+					}
+				}
+				
+				fieldSpecList.add(fieldSpecBuilder.build());
+			}
+			dtoTypeSpecBuilder.addFields(fieldSpecList);
+		}
+		
+		if (clazz.isEnum()) {
+			Enum<?>[] enumConstants = (Enum<?>[]) clazz.getEnumConstants();
+			if (enumConstants != null) {
+				for (Enum<?> enumConstant : enumConstants) {
+					List<String> formats = new ArrayList<>();
+					List<Object> args = new ArrayList<>();
+					if (fields != null && fields.length > 0) {
+						for (Field field : fields) {
+							int modifiers = field.getModifiers();
+							if (java.lang.reflect.Modifier.isStatic(modifiers)) {
+								continue;
+							}
+							Object value = field.get(null);
+							if (value != null) {
+								Class<?> fieldType = field.getType();
+								args.add(classNameMap.get(fieldType));
+								if (ClassUtils.isPrimitiveOrWrapper(fieldType) || fieldType == String.class) {
+									formats.add("new $T($S)");
+									args.add(value.toString());
+								} else if (fieldType.getSuperclass() == Enum.class) {
+									formats.add("$T.$L");
+									args.add(((Enum<?>) value).name());
+								}
+							} else {
+								formats.add("null");
+							}
+						}
+					}
+					dtoTypeSpecBuilder.addEnumConstant(enumConstant.name(), TypeSpec.anonymousClassBuilder(StringUtils.join(formats, ", "), args.toArray()).build());
+				}
+			}
+		}
+		
+		TypeSpec typeSpec = dtoTypeSpecBuilder.build();
+		JavaFile javaFile = JavaFile.builder(dtoPkg, typeSpec).build();
+		javaFileMap.put(clazz, javaFile);
+		return className;
 	}
 	
 	private void genPom() throws Exception {

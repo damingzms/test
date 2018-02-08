@@ -1,6 +1,5 @@
 package cn.sam.test.springboot;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import cn.sam.test.springboot.bean.Response;
+import cn.sam.test.springboot.bean.Role;
+import cn.sam.test.springboot.bean.User;
 
 @RestController
 @RequestMapping(value = "/example/", method = RequestMethod.POST)
@@ -67,88 +70,6 @@ public class PathExample {
         Response response = new Response();
         response.setResult(result);
 		return response;
-    }
-    
-    public static class User {
-    	
-    	private String name;
-    	
-    	private Date birthday;
-    	
-    	private Role role;
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public Date getBirthday() {
-			return birthday;
-		}
-
-		public void setBirthday(Date birthday) {
-			this.birthday = birthday;
-		}
-
-		public Role getRole() {
-			return role;
-		}
-
-		public void setRole(Role role) {
-			this.role = role;
-		}
-    	
-    }
-    
-    public static class Role {
-    	
-    	private String roleName;
-    	
-    	private Date createdDate;
-    	
-    	private User user;
-
-		public String getRoleName() {
-			return roleName;
-		}
-
-		public void setRoleName(String roleName) {
-			this.roleName = roleName;
-		}
-
-		public Date getCreatedDate() {
-			return createdDate;
-		}
-
-		public void setCreatedDate(Date createdDate) {
-			this.createdDate = createdDate;
-		}
-
-		public User getUser() {
-			return user;
-		}
-
-		public void setUser(User user) {
-			this.user = user;
-		}
-    	
-    }
-    
-    public static class Response {
-    	
-    	private String result;
-
-		public String getResult() {
-			return result;
-		}
-
-		public void setResult(String result) {
-			this.result = result;
-		}
-    	
     }
 
 }

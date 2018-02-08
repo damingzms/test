@@ -39,7 +39,12 @@ public class Test {
 		System.out.println(i1 == i);
 	}
 
+	public static void test5() {
+		long i = new Long(123);
+		System.out.println(Long.valueOf(i).toString());
+	}
+
 	public static void main(String[] args) {
-		test2();
+		test5();
 	}
 }
