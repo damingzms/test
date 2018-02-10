@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -29,6 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
@@ -40,13 +46,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Predicate;
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.TypeVariableName;
+import com.squareup.javapoet.WildcardTypeName;
 import com.squareup.javapoet.TypeSpec.Builder;
 
 import cn.sam.test.springcloud.client.generator.util.FileUtils;
@@ -153,10 +163,6 @@ public class GenerationMojo extends AbstractMojo {
 	
 	private File srcDirFile;
 	
-	private File dtoDirFile;
-	
-	private File serviceDirFile;
-	
 	private File factoryDirFile;
 	
 	public void execute() throws MojoExecutionException {
@@ -188,13 +194,11 @@ public class GenerationMojo extends AbstractMojo {
 			// GENERATE Project Structure
 			genProjectStructure();
 			
-			// GENERATE POM
-			genPom();
-			
 			// JAVAFILES
 			Map<Class<?>, JavaFile> dtoJavaFileMap = new HashMap<>();
 			Map<Class<?>, ClassName> dtoClassNameMap = new HashMap<>();
 			List<JavaFile> serviceJavaFiles = new ArrayList<>();
+			List<ClassName> serviceClassNames = new ArrayList<>();
 			Map<String, Integer> dtoNameCountMap = new HashMap<>();
 			Map<String, Integer> serviceNameCountMap = new HashMap<>();
 			for (Class<?> controllerClasse : controllerClasses) {
@@ -217,6 +221,8 @@ public class GenerationMojo extends AbstractMojo {
 					serviceNameCountMap.put(serviceName, serviceNameCount);
 					serviceName += serviceNameCount;
 				}
+				ClassName className = ClassName.get(servicePkg, serviceName);
+				serviceClassNames.add(className);
 				Builder serviceTypeSpecBuilder = TypeSpec.classBuilder(serviceName)
 					    .addModifiers(Modifier.PUBLIC)
 					    .addAnnotation(Service.class);
@@ -238,7 +244,7 @@ public class GenerationMojo extends AbstractMojo {
 					for (Method method : methods) {
 						
 						// RESPONSE DTO
-						Class<?> returnType = method.getReturnType();
+						Type returnType = method.getGenericReturnType();
 						TypeName returnClassName = genDtoJavaFile(dtoJavaFileMap, dtoClassNameMap, dtoNameCountMap, returnType);;
 						
 						// service method
@@ -257,7 +263,7 @@ public class GenerationMojo extends AbstractMojo {
 							for (java.lang.reflect.Parameter parameter : parameters) {
 								
 								// REQUEST DTO
-								Class<?> parameterType = parameter.getType();
+								Type parameterType = parameter.getParameterizedType();
 								TypeName parameterClassName = genDtoJavaFile(dtoJavaFileMap, dtoClassNameMap, dtoNameCountMap, parameterType);
 								
 								// service method parameter
@@ -314,10 +320,16 @@ public class GenerationMojo extends AbstractMojo {
 			outputJavaFiles(srcDirFile, serviceJavaFiles);
 			
 			// GENERATE Factory
+			genFactory(serviceClassNames);
 			
 			// GENERATE Util
+			genUtil();
 			
 			// GENERATE Transformer
+			genTransformer();
+			
+			// GENERATE POM
+			genPom();
 
 			log.info("Successfully Generated Spring Cloud client project: " + baseDirFile.getAbsolutePath());
 		} catch (Throwable e) {
@@ -334,15 +346,66 @@ public class GenerationMojo extends AbstractMojo {
 			baseDirFile = new File(baseDir);
 		}
 		srcDirFile = FileUtils.mkdirs(baseDirFile, srcDir);
-		dtoDirFile = FileUtils.mkdirs(srcDirFile, dtoPkg.replace('.', File.separatorChar));
-		serviceDirFile = FileUtils.mkdirs(srcDirFile, servicePkg.replace('.', File.separatorChar));
+		FileUtils.mkdirs(srcDirFile, dtoPkg.replace('.', File.separatorChar));
+		FileUtils.mkdirs(srcDirFile, servicePkg.replace('.', File.separatorChar));
 		factoryDirFile = new File(srcDirFile, factoryPkg.replace('.', File.separatorChar));
 	}
 	
-	private TypeName genDtoJavaFile(Map<Class<?>, JavaFile> javaFileMap, Map<Class<?>, ClassName> classNameMap, Map<String, Integer> nameCountMap, Class<?> clazz) throws Exception {
+	private TypeName genDtoJavaFile(Map<Class<?>, JavaFile> javaFileMap, Map<Class<?>, ClassName> classNameMap, Map<String, Integer> nameCountMap, Type type) throws Exception {
+		Class<?> clazz = null;
+		if (type instanceof Class<?>) {
+			clazz = (Class<?>) type;
+			if (clazz.isArray()) {
+				Class<?> componentType = clazz.getComponentType();
+				TypeName typeName = genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, componentType);
+				return ArrayTypeName.of(typeName);
+			}
+		} else if (type instanceof ParameterizedType) {
+			ParameterizedType parameterizedType = (ParameterizedType) type;
+			Type rawType = parameterizedType.getRawType();
+			Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+			ClassName rawTypeName = (ClassName) genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, rawType);
+			List<TypeName> argumentTypeNameList = new ArrayList<>();
+			if (actualTypeArguments != null) {
+				for (Type actualTypeArgument : actualTypeArguments) {
+					TypeName typeName = genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, actualTypeArgument);
+					argumentTypeNameList.add(typeName);
+				}
+			}
+			return ParameterizedTypeName.get(rawTypeName, argumentTypeNameList.toArray(new TypeName[]{}));
+		} else if (type instanceof WildcardType) {
+			WildcardType wildcardType = (WildcardType) type;
+			Type[] lowerBounds = wildcardType.getLowerBounds();
+			Type[] upperBounds = wildcardType.getUpperBounds();
+			if (lowerBounds != null) {
+				for (Type lowerBound : lowerBounds) {
+					genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, lowerBound);
+				}
+			}
+			if (upperBounds != null) {
+				for (Type upperBound : upperBounds) {
+					genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, upperBound);
+				}
+			}
+			return WildcardTypeName.get(wildcardType);
+
+		} else if (type instanceof TypeVariable<?>) {
+			TypeVariable<?> typeVariable = (TypeVariable<?>) type;
+			return TypeVariableName.get(typeVariable);
+
+		} else if (type instanceof GenericArrayType) {
+			GenericArrayType genericArrayType = (GenericArrayType) type;
+			Type genericComponentType = genericArrayType.getGenericComponentType();
+			genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, genericComponentType);
+			return ArrayTypeName.get(genericArrayType);
+
+		} else {
+			throw new IllegalArgumentException("unexpected type: " + type);
+		}
 		if (classNameMap.containsKey(clazz)) {
 			return classNameMap.get(clazz);
 		}
+		
 		String fullName = clazz.getName();
 		if (!fullName.startsWith(packagesToScan) || fullName.startsWith("java") || fullName.startsWith("javax")
 				|| fullName.startsWith("org.springframework")) {
@@ -413,7 +476,7 @@ public class GenerationMojo extends AbstractMojo {
 				if (java.lang.reflect.Modifier.isFinal(modifiers)) modifierList.add(Modifier.FINAL);
 				
 				// field type
-				Class<?> fieldType = field.getType();
+				Type fieldType = field.getGenericType();
 				TypeName fieldClassName = genDtoJavaFile(javaFileMap, classNameMap, nameCountMap, fieldType);
 				
 				// name
@@ -423,11 +486,14 @@ public class GenerationMojo extends AbstractMojo {
 				
 				// value，只支持静态成员属性，只支持原始类型、包装类和、String、Enum
 				if (modifierList.contains(Modifier.STATIC)) {
+					Class<?> fieldClass = field.getType();
 					Object value = field.get(null);
 					if (value != null) {
-						if (ClassUtils.isPrimitiveOrWrapper(fieldType) || fieldType == String.class) {
-							fieldSpecBuilder.initializer("new $T($S)", fieldClassName, value.toString());
-						} else if (fieldType.getSuperclass() == Enum.class) {
+						if (fieldClass == String.class) {
+							fieldSpecBuilder.initializer("$S", value);
+						} else if (ClassUtils.isPrimitiveOrWrapper(fieldClass)) {
+							fieldSpecBuilder.initializer("new $T($S)", ClassUtils.resolvePrimitiveIfNecessary(fieldClass), value.toString());
+						} else if (fieldClass.getSuperclass() == Enum.class) {
 							fieldSpecBuilder.initializer("$T.$L", fieldClassName, ((Enum<?>) value).name());
 						}
 					}
@@ -450,15 +516,20 @@ public class GenerationMojo extends AbstractMojo {
 							if (java.lang.reflect.Modifier.isStatic(modifiers)) {
 								continue;
 							}
-							Object value = field.get(null);
+							field.setAccessible(true);
+							Object value = field.get(enumConstant);
 							if (value != null) {
-								Class<?> fieldType = field.getType();
-								args.add(classNameMap.get(fieldType));
-								if (ClassUtils.isPrimitiveOrWrapper(fieldType) || fieldType == String.class) {
+								Class<?> fieldClass = field.getType();
+								if (fieldClass == String.class) {
+									formats.add("$S");
+									args.add(value);
+								} else if (ClassUtils.isPrimitiveOrWrapper(fieldClass)) {
 									formats.add("new $T($S)");
+									args.add(ClassUtils.resolvePrimitiveIfNecessary(fieldClass));
 									args.add(value.toString());
-								} else if (fieldType.getSuperclass() == Enum.class) {
+								} else if (fieldClass.getSuperclass() == Enum.class) {
 									formats.add("$T.$L");
+									args.add(classNameMap.get(fieldClass));
 									args.add(((Enum<?>) value).name());
 								}
 							} else {
@@ -477,6 +548,53 @@ public class GenerationMojo extends AbstractMojo {
 		return className;
 	}
 	
+	private void genFactory(List<ClassName> serviceClassNames) throws Exception {
+		
+		// factory interface
+		Map<String, Object> root = new HashMap<>();
+		root.put("package", factoryPkg);
+		outputFileFromTemplate(factoryDirFile, TemplateUtils.TEMPLATE_NAME_SERVICE_FACTORY, root);
+		
+		// factory impl
+		ClassName interfaceClassName = ClassName.get(factoryPkg, "ServiceFactory");
+		Builder builder = TypeSpec.classBuilder(factoryClassName)
+				.addAnnotation(Getter.class)
+				.addAnnotation(Setter.class)
+				.addModifiers(Modifier.PUBLIC)
+				.addSuperinterface(interfaceClassName);
+		com.squareup.javapoet.FieldSpec.Builder protocolBuilder = FieldSpec.builder(String.class, "protocol", Modifier.PRIVATE).initializer("$S", "http");
+		builder.addField(protocolBuilder.build());
+		com.squareup.javapoet.FieldSpec.Builder hostBuilder = FieldSpec.builder(String.class, "host", Modifier.PRIVATE).initializer("$S", "127.0.0.1");
+		builder.addField(hostBuilder.build());
+		com.squareup.javapoet.FieldSpec.Builder portBuilder = FieldSpec.builder(int.class, "port", Modifier.PRIVATE).initializer("$L", -1);
+		builder.addField(portBuilder.build());
+		com.squareup.javapoet.FieldSpec.Builder basePathBuilder = FieldSpec.builder(String.class, "basePath", Modifier.PRIVATE).initializer("$S", "");
+		builder.addField(basePathBuilder.build());
+
+		for (ClassName className : serviceClassNames) {
+			com.squareup.javapoet.FieldSpec.Builder fieldSpecBuilder = FieldSpec.builder(className, StringUtils.capitalize(className.simpleName()), Modifier.PRIVATE)
+					.addAnnotation(Autowired.class);
+			builder.addField(fieldSpecBuilder.build());
+		}
+		TypeSpec typeSpec = builder.build();
+		JavaFile javaFile = JavaFile.builder(factoryPkg, typeSpec).build();
+		outputJavaFile(srcDirFile, javaFile);
+	}
+	
+	private void genUtil() throws Exception {
+		Map<String, Object> root = new HashMap<>();
+		root.put("package", factoryPkg);
+		outputFileFromTemplate(factoryDirFile, TemplateUtils.TEMPLATE_NAME_UTILS, root);
+	}
+	
+	private void genTransformer() throws Exception {
+		Map<String, Object> root = new HashMap<>();
+		root.put("package", factoryPkg);
+		root.put("dtoPackage", dtoPkg);
+		root.put("servicePackage", servicePkg);
+		outputFileFromTemplate(factoryDirFile, TemplateUtils.TEMPLATE_NAME_TRANSFORMER, root);
+	}
+	
 	private void genPom() throws Exception {
 		Map<String, Object> root = new HashMap<>();
 		root.put("groupId", groupId);
@@ -484,7 +602,7 @@ public class GenerationMojo extends AbstractMojo {
 		root.put("version", version + 11);
 		outputFileFromTemplate(baseDirFile, TemplateUtils.TEMPLATE_NAME_POM, root);
 	}
-	
+
 	private void outputFileFromTemplate(File dir, String templateName, Object dataModel) throws Exception {
 		Template template = TemplateUtils.getFreemarkerConfiguration().getTemplate(templateName);
 		File file = new File(dir, TemplateUtils.templateName2FileName(templateName));
@@ -493,9 +611,13 @@ public class GenerationMojo extends AbstractMojo {
 	    }
 	}
 	
+	private void outputJavaFile(File dir, JavaFile javaFile) throws Exception {
+		javaFile.writeTo(dir);
+	}
+	
 	private void outputJavaFiles(File dir, Collection<JavaFile> javaFiles) throws Exception {
 		for (JavaFile javaFile : javaFiles) {
-			javaFile.writeTo(dir);
+			outputJavaFile(dir, javaFile);
 		}
 	}
 	

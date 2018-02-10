@@ -1,4 +1,4 @@
-package cn.sam.test.springcloud.client;
+package ${package};
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -39,12 +39,12 @@ public class Transformer {
 	
 	private Map<String, Class<?>> responseTypeCache = new HashMap<>();
 	
-	private String dtoPkg = "cn.sam.test.springcloud.client.dto";
+	private String dtoPkg = "${dtoPackage}";
 	
 	@Autowired
 	private ServiceFactory factory;
 
-	@Around("execution(* cn.sam.test.springcloud.client.service.*.*(..))")
+	@Around("execution(* ${servicePackage}.*.*(..))")
 	public Object transform(ProceedingJoinPoint pjp) throws Exception {
 		Object service = pjp.getTarget();
 		Class<?> serviceClass = AopUtils.getTargetClass(service);

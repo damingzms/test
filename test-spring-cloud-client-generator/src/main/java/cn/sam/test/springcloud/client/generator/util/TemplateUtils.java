@@ -9,6 +9,12 @@ public final class TemplateUtils {
 	
 	public static final String TEMPLATE_NAME_POM = "pom.xml" + TEMPLATE_NAME_POSTFIX;
 	
+	public static final String TEMPLATE_NAME_SERVICE_FACTORY = "ServiceFactory.java" + TEMPLATE_NAME_POSTFIX;
+	
+	public static final String TEMPLATE_NAME_UTILS = "Utils.java" + TEMPLATE_NAME_POSTFIX;
+	
+	public static final String TEMPLATE_NAME_TRANSFORMER = "Transformer.java" + TEMPLATE_NAME_POSTFIX;
+	
 	private static final String TEMPLATE_DIRECTORY = "/templates";
 	
 	private static final Configuration FREEMARKER_CFG = new Configuration(Configuration.VERSION_2_3_27);

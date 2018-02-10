@@ -1,11 +1,11 @@
 Spring Cloud 客户端生成器，生成的客户端项目，让Spring Cloud微服务接口调用起来跟调用一个本地方法一样简单
 运行过程：
-根据模板生成pom.xml文件
 生成DTO类文件
 生成Service类文件
 生成Factory类文件
 生成Util类文件
 生成Transformer类文件
+根据模板生成pom.xml文件
 
 注意：
 1.默认扫描名为groupId参数值的包及其子包下面的Controller和DTO，可以自定义包名
@@ -18,8 +18,3 @@ Spring Cloud 客户端生成器，生成的客户端项目，让Spring Cloud微�
 3、非@RequestBody修饰的参数，暂不支持自定义的引用类型的属性。可以使用限定路径的方式，比如Role类有User类型的属性user，User类有属性name，那么可以将以下参数“user.name=*”，放置到form或者URL参数中
 4、客户端在调用时使用反射获取URL和参数数据，会有一定性能损耗，可以增加缓存机制，或者建立数据模型，在生成客户端时就把需要的数据抽取出来
 5、Transformer中切面（Aspect）的切入点（Pointcut）包名，有极少的可能性会跟Spring消费者项目（Consumer）包名冲突
-
-代码生成
-1、模板文件，替代模板文件中的placeholder   DONE: Freemarker
-1、搜索所有带有@Controller或@RestController注解的类，怎样高效地根据注解获得类       DONE: Google Reflection
-2、生成DTO，如何判断原始数据类型（包括String和包装类）    DONE: 不用判断，只生成指定包下面的DTO

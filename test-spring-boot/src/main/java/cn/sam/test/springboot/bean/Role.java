@@ -1,6 +1,7 @@
 package cn.sam.test.springboot.bean;
 
 import java.util.Date;
+import java.util.List;
 
 public class Role {
 	
@@ -8,7 +9,7 @@ public class Role {
 	
 	private Date createdDate;
 	
-	private User user;
+	private List<User> user;
 
 	public String getRoleName() {
 		return roleName;
@@ -26,11 +27,11 @@ public class Role {
 		this.createdDate = createdDate;
 	}
 
-	public User getUser() {
+	public List<User> getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(List<User> user) {
 		this.user = user;
 	}
 	
