@@ -32,8 +32,8 @@
 			</plugin>
 
 			<plugin>
-				<groupId>cn.sam.test</groupId>
-				<artifactId>test-spring-cloud-client-generator</artifactId>
+				<groupId>wang.zhuping.spring</groupId>
+				<artifactId>spcclient-generator-maven-plugin</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
 					<packagesToScan>cn.sam.test.springboot</packagesToScan>

@@ -24,14 +24,14 @@ public class PathExampleService {
     return null;
   }
 
-  @RequestMapping("testObjectAndString")
-  public Response testObjectAndString(@RequestBody User arg0,
-      @RequestParam("newName") String newName) {
+  @RequestMapping("testObject")
+  public Response testObject(@RequestBody User arg0) {
     return null;
   }
 
-  @RequestMapping("testObject")
-  public Response testObject(@RequestBody User arg0) {
+  @RequestMapping("testObjectAndString")
+  public Response testObjectAndString(@RequestBody User arg0,
+      @RequestParam("newName") String newName) {
     return null;
   }
 
