@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import cn.sam.test.test.spring.boot.client.dto.Response;
 import cn.sam.test.test.spring.boot.client.dto.Role;
@@ -33,6 +32,12 @@ public class Tests {
 	@Test
 	public void testString() {
 		String test = factory.getPathExampleService().testString("Samuel");
+		System.out.println(test);
+	}
+
+	@Test
+	public void testPathVariable() {
+		String test = factory.getPathExampleService().testPathVariable("Samuel");
 		System.out.println(test);
 	}
 
@@ -92,9 +97,42 @@ public class Tests {
     }
 
     @Test
+	public void testArray() {
+    	String[] names = {"Jojo", "Samuel"};
+		Response response = factory.getPathExampleService().testArray(names);
+		System.out.println(response.getResult());
+	}
+
+    @Test
+    public void testObjectArray() {
+    	User[] users = new User[2];
+		User user = new User();
+		user.setName("Samuel");
+		user.setBirthday(new Date());
+		users[0] = user;
+		user = new User();
+		user.setName("Jojo");
+		user.setBirthday(new Date());
+		users[1] = user;
+//		Response response = factory.getPathExampleService().testObjectArray(users);
+//		System.out.println(response.getResult());
+    }
+
+    @Test
+    public void testRequestMethod() {
+		Response response = factory.getPathExampleService().testRequestMethod("Samuel");
+		System.out.println(response.getResult());
+    }
+
+    @Test
     public void testReturnPrimitive() {
 		int response = factory.getPathExampleService().testReturnPrimitive();
 		System.out.println(response);
+    }
+
+    @Test
+    public void testReturnVoid() {
+		factory.getPathExampleService().testReturnVoid();
     }
 
 }
