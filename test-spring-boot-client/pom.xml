@@ -5,7 +5,7 @@
 
 	<groupId>cn.sam.test</groupId>
 	<artifactId>test-spring-boot-client</artifactId>
-	<version>0.0.1-SNAPSHOT11</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

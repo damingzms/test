@@ -72,4 +72,9 @@ public class PathExample {
 		return response;
     }
 
+    @RequestMapping("testReturnPrimitive")
+    int testReturnPrimitive() {
+		return 1;
+    }
+
 }

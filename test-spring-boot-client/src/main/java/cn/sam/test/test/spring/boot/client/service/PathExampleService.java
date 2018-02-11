@@ -24,14 +24,14 @@ public class PathExampleService {
     return null;
   }
 
-  @RequestMapping("testObject")
-  public Response testObject(@RequestBody User arg0) {
-    return null;
-  }
-
   @RequestMapping("testObjectAndString")
   public Response testObjectAndString(@RequestBody User arg0,
       @RequestParam("newName") String newName) {
+    return null;
+  }
+
+  @RequestMapping("testObject")
+  public Response testObject(@RequestBody User arg0) {
     return null;
   }
 
@@ -46,6 +46,11 @@ public class PathExampleService {
   @RequestMapping("testMultiObject")
   public Response testMultiObject(@RequestBody User arg0, Role arg1) {
     return null;
+  }
+
+  @RequestMapping("testReturnPrimitive")
+  public int testReturnPrimitive() {
+    return 0;
   }
 
   @RequestMapping("testString")

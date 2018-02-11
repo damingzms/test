@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import cn.sam.test.test.spring.boot.client.dto.Response;
 import cn.sam.test.test.spring.boot.client.dto.Role;
@@ -88,6 +89,12 @@ public class Tests {
     	map.put("name", "Samuel");
 		Response response = factory.getPathExampleService().testMap(map);
 		System.out.println(response.getResult());
+    }
+
+    @Test
+    public void testReturnPrimitive() {
+		int response = factory.getPathExampleService().testReturnPrimitive();
+		System.out.println(response);
     }
 
 }
