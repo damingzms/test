@@ -1,3 +1,3 @@
 Spring Cloud 客户端，本项目的宗旨是，让Spring Cloud微服务接口调用起来跟调用一个本地方法一样简单
 
-本项目由spcclient-generator-maven-plugin自动生成
+本项目（除了单元测试代码）由test-spring-boot项目使用spcclient-generator-maven-plugin自动生成

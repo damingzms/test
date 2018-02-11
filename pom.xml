@@ -23,7 +23,6 @@
 		<module>test-zookeeper</module>
 		<module>test-maven-plugin</module>
 		<module>test-finagle</module>
-		<module>test-spring-cloud-client</module>
 	</modules>
 
 	<properties>
