@@ -35,13 +35,17 @@ public class Test {
 		System.out.println(split[1]);
 	}
 	
+	private static void test4() {
+		Byte b = new Byte((byte) 4);
+		System.out.println(b.equals(4));
+	}
+	
 	public static boolean isNullOrZero(Number i) {
 		return i == null || i.doubleValue() == 0;
 	}
 
 	public static void main(String[] args) {
-		Integer i = 2;
-		System.out.println(isNullOrZero(i));
+		test4();
 	}
 
 }
