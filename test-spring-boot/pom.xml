@@ -32,9 +32,9 @@
 			</plugin>
 
 			<plugin>
-				<groupId>wang.zhuping.spring</groupId>
+				<groupId>global.hh.spring</groupId>
 				<artifactId>spcclient-generator-maven-plugin</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>2.1.1-SNAPSHOT</version>
 				<configuration>
 					<packagesToScan>cn.sam.test.springboot</packagesToScan>
 				</configuration>

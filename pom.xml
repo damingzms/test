@@ -8,6 +8,7 @@
 	<packaging>pom</packaging>
 	<name>test</name>
 	<modules>
+		<module>test-blockchain</module>
 		<module>test-common</module>
 		<module>test-concurrency</module>
 		<module>test-conversion</module>
