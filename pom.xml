@@ -51,7 +51,7 @@
 		<guava.version>13.0</guava.version>
 		<gson.version>2.2.4</gson.version>
 		<log4j.version>1.2.16</log4j.version>
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<aspectjrt.version>1.6.11</aspectjrt.version>
 		<aspectj.version>1.5.4</aspectj.version>
 		<joda.version>2.1</joda.version>
