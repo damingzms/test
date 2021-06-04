@@ -14,6 +14,7 @@
 		<module>test-conversion</module>
 		<module>test-dependency</module>
 		<module>test-jpa</module>
+		<module>test-jvm</module>
 		<module>test-messaging</module>
 		<module>test-redis</module>
 		<module>test-rmi</module>
