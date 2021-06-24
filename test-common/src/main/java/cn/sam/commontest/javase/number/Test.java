@@ -40,12 +40,16 @@ public class Test {
 		System.out.println(b.equals(4));
 	}
 	
+	private static void test5() {
+		System.out.println(Math.round(-1.5));
+	}
+	
 	public static boolean isNullOrZero(Number i) {
 		return i == null || i.doubleValue() == 0;
 	}
 
 	public static void main(String[] args) {
-		test4();
+		test5();
 	}
 
 }
