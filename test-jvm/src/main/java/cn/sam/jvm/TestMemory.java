@@ -15,7 +15,7 @@ public class TestMemory {
 	    }
 	}
 	
-	//如果在jdk1.6环境下运行 将报OOM后面跟着PermGen space说明方法区OOM，即常量池在永久代
-	//如果是jdk1.7或1.8环境下运行 同时限制堆的大小  将报heap space 即常量池在堆中
+	//如果在jdk1.6环境下运行，将报OOM后面跟着PermGen space说明方法区OOM，即常量池在永久代
+	//如果是jdk1.7或1.8环境下运行，同时限制堆的大小，将报heap space，即常量池在堆中
 
 }
